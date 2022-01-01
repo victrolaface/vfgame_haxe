@@ -1,5 +1,5 @@
-.vscode/
+#.vscode/
 _ref/
 assets/
-build/
-.unittest
+res/
+#.unittest

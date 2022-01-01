@@ -10,8 +10,8 @@ class EntityStorageTests implements ITest {
 	public function new()
 		sut = new EntityStorage();
 
-	inline function test_initialized_default_is_valid() {
+	function test_default_init_is_valid() {
 		sut = new EntityStorage();
-		Assert.isTrue(sut.isInitialized);
+		Assert.isTrue(sut.isInitialized, sut.output);
 	}
 }

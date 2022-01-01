@@ -1,0 +1,46 @@
+{
+    "dirty": false,
+    "state": "Update",
+    "storage": {
+        "length": 5,
+        "available": 4,
+        "count": 4,
+        "next": 1048580,
+        "items": [
+            {
+                "index": 4,
+                "version": 1,
+                "id": 1048580
+            },
+            {
+                "index": 1,
+                "version": 1,
+                "id": 1048577
+            },
+            {
+                "index": 2,
+                "version": 1,
+                "id": 1048578
+            },
+            {
+                "index": 3,
+                "version": 1,
+                "id": 1048579
+            },
+            {
+                "index": 4,
+                "version": 1,
+                "id": 1048580
+            }
+        ]
+    },
+    "capacity": {
+        "capsAmount": 1,
+        "caps_index": 0,
+        "currentCap": 4,
+        "nextCap": 4,
+        "caps": [
+            4
+        ]
+    }
+}

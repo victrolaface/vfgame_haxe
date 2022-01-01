@@ -3,9 +3,12 @@
 -cp test
 -p src
 -m TestAll
+#-x TestAll
+-js res/js/main.js
+-cmd node res/js/main.js
 #-lib heaps
 #-lib hlsdl
 #-lib ammer
 #-lib ammer:https://github.com/Aurel300/ammer.git
 #-p test
--hl build/testAll.hl
+#-hl build/testAll.hl

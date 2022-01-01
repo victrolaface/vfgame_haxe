@@ -1,0 +1,16 @@
+{
+	"tools.ecs.core.EntityStorageTests": {
+		"pos": {
+			"line": 6,
+			"file": "test/tools/ecs/core/EntityStorageTests.hx"
+		},
+		"methods": {
+			"test_default_init_is_valid": {
+				"line": 12
+			},
+			"sut": {
+				"line": 7
+			}
+		}
+	}
+}
