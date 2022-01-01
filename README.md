@@ -1,2 +1,0 @@
-# vfgame
-haxe game
