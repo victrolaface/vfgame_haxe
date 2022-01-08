@@ -1,0 +1,24 @@
+{
+	"name": "root",
+	"classes": [
+		{
+			"name": "tools.ecs.core.EntityManagerTests",
+			"pos": {
+				"line": 7,
+				"file": "test/tools/ecs/core/EntityManagerTests.hx"
+			},
+			"id": "tools.ecs.core.EntityManagerTests",
+			"methods": [
+				{
+					"name": "test_init_is_valid",
+					"line": 15,
+					"executionTime": 0,
+					"errorLine": null,
+					"state": "success",
+					"message": null,
+					"timestamp": 1641608075.9532511
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,10 @@
+libs.hxml
+-cmd rm bin/* -rf 
+
+# Heaps hashlink build
+-cp src
+-m Main
+-hl res/hl/Main.hl
+-D dce=full
+--no-traces
+-D analyzer-optimize

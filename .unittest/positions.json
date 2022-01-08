@@ -1,15 +1,27 @@
 {
-	"tools.ecs.core.EntityStorageTests": {
+	"tools.ecs.core.EntityManagerTests": {
 		"pos": {
-			"line": 6,
-			"file": "test/tools/ecs/core/EntityStorageTests.hx"
+			"line": 7,
+			"file": "test/tools/ecs/core/EntityManagerTests.hx"
 		},
 		"methods": {
-			"test_default_init_is_valid": {
-				"line": 12
+			"test_init_is_valid": {
+				"line": 15
+			},
+			"canUpdateFromInit": {
+				"line": 10
+			},
+			"get_canUpdateFromInit": {
+				"line": 33
+			},
+			"stateIsInit": {
+				"line": 9
+			},
+			"get_stateIsInit": {
+				"line": 36
 			},
 			"sut": {
-				"line": 7
+				"line": 8
 			}
 		}
 	}

@@ -1,5 +1,5 @@
-#.vscode/
 _ref/
+_tmp/
 assets/
 res/
-#.unittest
+.unittest

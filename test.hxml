@@ -1,11 +1,15 @@
+libs.hxml
 -lib utest
 -lib test-adapter
+-lib json2object
 -cp test
 -p src
--m TestAll
-#-x TestAll
--js res/js/main.js
--cmd node res/js/main.js
+-m Tests
+-x Tests
+--dce full
+-D debug
+#-js res/js/main.js
+#-cmd node res/js/main.js
 #-lib heaps
 #-lib hlsdl
 #-lib ammer
