@@ -9,7 +9,7 @@ import tools.debug.Precondition;
 	static var dirty:Bool;
 	static var len:Int;
 
-	public static inline function alloc<T>(_len:Int) {
+	static public inline function alloc<T>(?_vec:Vector<T>, _len:Int) {
 		dirty = _len < 0;
 		#if debug
 		Precondition.requires(!dirty);
@@ -18,8 +18,11 @@ import tools.debug.Precondition;
 			onDirty();
 			return null;
 		} else {
-			var vec = new Vector<T>(_len);
-			for (i in 0..._len)
+			var vec:Vector<T>;
+			len = _vec == null ? _len : _vec.length;
+			len = len == _len ? len : _len;
+			vec = new Vector<T>(len);
+			for (i in 0...len)
 				vec[i] = null;
 			return vec;
 		}

@@ -5,28 +5,60 @@ import haxe.ds.Vector;
 import tools.debug.Precondition;
 #end
 
-using Std;
 using tools.ds.VectorTools;
 
 @:structInit class DynamicVector<T> {
 	final DEFAULT_SIZE = 64;
+	final MAX_SIZE = 524288;
 
+	var dirty:Bool;
 	var count:Int;
 	var size:Int;
 	var storage:Vector<T>;
-	var type:String;
 	var maxCap:Int;
 	var caps:Vector<Int>;
+	var capIdx:Int;
 	var idx:Int;
 	var len:Int;
+	var state:State = None;
+	var className:String;
+	var cap(get, never):Int;
+	var hasNextCap(get, never):Bool;
+	var nextCap(get, never):Int;
 
-	public inline function new(?_size:Int) {
-		size = _size == null || _size <= 0 ? DEFAULT_SIZE : _size;
+	inline function get_hasNextCap() {
+		len = caps.length;
+		idx = capIdx;
+		idx++;
+		return idx + 1 <= len;
+	}
+
+	inline function get_nextCap()
+		return hasNextCap ? caps[capIdx + 1] : cap;
+
+	public var length(get, never):Int;
+
+	inline function get_length()
+		return maxCap;
+
+	inline function get_cap()
+		return caps[capIdx];
+
+	public inline function new(?_size:Int)
+		doAlloc(_size);
+
+	inline function onDirty()
+		dirty = dirty ? !dirty : false;
+
+	inline function doAlloc(?_size:Int) {
+		maxCap = _size == null || _size <= 0 ? DEFAULT_SIZE : _size;
 		maxCap = size;
+		final capGtDefault = maxCap > DEFAULT_SIZE;
+		var capsArr = new Array<Int>();
 		idx = 0;
-		if (maxCap > DEFAULT_SIZE) {
-			var capsArr = new Array<Int>();
-			capsArr[idx] = DEFAULT_SIZE;
+		capIdx = idx;
+		capsArr[capIdx] = capGtDefault ? DEFAULT_SIZE : maxCap;
+		if (capGtDefault) {
 			var addCap = true;
 			do {
 				var nextCap = capsArr[idx] * 2;
@@ -35,338 +67,161 @@ using tools.ds.VectorTools;
 				capsArr[idx] = add ? nextCap : maxCap;
 				addCap = add;
 			} while (addCap);
-			len = capsArr.length;
-			caps = VectorTools.alloc(len);
-			for (i in 0...len)
-				caps[i] = capsArr[i];
-		} else {
-			caps = VectorTools.alloc(1);
-			caps[idx] = maxCap;
 		}
-		idx = 0;
-		len = caps[idx];
-		storage = VectorTools.alloc(len);
-		count = 0;
-	}
-
-	public inline function add(_item:T) {
-		#if debug
-		// Precondition.requires(isType, 'can add item of type'); // _item.isOfType())
-		#end
-	}
-
-	// static inline function equals<T>(_expected:T, _result:T) {
-	//	if (_expected != _result)
-	// }
-}
-/*
-	class NativeArrayTools {
-	public static inline function alloc<T>(len:Int):NativeArray<T> {
-		#if flash10
-		#if (generic && !no_inline)
-		return new flash.Vector<T>(len, true);
-		#else
-		var a = new Array<T>();
-		untyped a.length = len;
-		return a;
-		#end
-		#elseif neko
-		return untyped __dollar__amake(len);
-		#elseif js
-		#if (haxe_ver >= 4.000)
-		return js.Syntax.construct(Array, len);
-		#else
-		return untyped __new__(Array, len);
-		#end
-		#elseif cs
-		return cs.Lib.arrayAlloc(len);
-		#elseif java
-		return untyped Array.alloc(len);
-		#elseif cpp
-		cpp.NativeArray.create(len);
-		return a;
-		#elseif python
-		return python.Syntax.code("[{0}]*{1}", null, len);
-		#elseif eval
-		return new eval.Vector<T>(len);
-		#else
-		var a = [];
-		untyped a.length = len;
-		return a;
-		#end
-	}
-
-	#if !(assert == "extra")
-	inline
-	#end
-	public static function get<T>(src:NativeArray<T>, index:Int):T {
-		#if (assert == "extra")
-		assert(index >= 0 && index < size(src), 'index $index out of range ${size(src)}');
-		#end
-
-		return #if (cpp && generic)
-			cpp.NativeArray.unsafeGet(src, index);
-		#elseif python
-			python.internal.ArrayImpl.unsafeGet(src, index);
-		#else
-			src[index];
-		#end
-	}
-
-	#if !(assert == "extra")
-	inline
-	#end
-	public static function set<T>(dst:NativeArray<T>, index:Int, val:T) {
-		#if (assert == "extra")
-		assert(index >= 0 && index < size(dst), 'index $index out of range ${size(dst)}');
-		#end
-
-		#if (cpp && generic)
-		cpp.NativeArray.unsafeSet(dst, index, val);
-		#elseif python
-		python.internal.ArrayImpl.unsafeSet(dst, index, val);
-		#else
-		dst[index] = val;
-		#end
-	}
-
-	public static inline function size<T>(a:NativeArray<T>):Int {
-		return #if neko
-			untyped __dollar__asize(a);
-		#elseif cs
-			a.length;
-		#elseif java
-			a.length;
-		#elseif python
-			a.length;
-		#elseif cpp
-			a.length;
-		#else
-			a.length;
-		#end
-	}
-
-	public static function toArray<T>(src:NativeArray<T>, first:Int, len:Int, dst:Array<T>):Array<T> {
-		assert(first >= 0 && first < size(src), "first index out of range");
-		assert(len >= 0 && first + len <= size(src), "len out of range");
-
-		#if (cpp || python)
-		if (first == 0 && len == size(src))
-			return src.copy();
-		#elseif eval
-		if (first == 0 && len == size(src))
-			return src.toArray();
-		#end
-
-		if (len == 0)
-			return [];
-		var out = ArrayTools.alloc(len);
-		if (first == 0) {
-			for (i in 0...len)
-				out[i] = get(src, i);
-		} else {
-			for (i in first...first + len)
-				out[i - first] = get(src, i);
-		}
-		return out;
-	}
-
-	public static inline function ofArray<T>(src:Array<T>):NativeArray<T> {
-		#if (python || cs)
-		return cast src.copy();
-		#elseif flash10
-		return #if (generic && !no_inline) flash.Vector.ofArray(src); #else src.copy(); #end
-		#elseif js
-		return src.slice(0, src.length);
-		#else
-		var out = alloc(src.length);
-		for (i in 0...src.length)
-			set(out, i, src[i]);
-		return out;
-		#end
-	}
-
-	#if (cs || java || neko || cpp)
-	inline
-	#end
-	public static function blit<T>(src:NativeArray<T>, srcPos:Int, dst:NativeArray<T>, dstPos:Int, n:Int) {
-		if (n > 0) {
-			assert(srcPos < size(src), "srcPos out of range");
-			assert(dstPos < size(dst), "dstPos out of range");
-			assert(srcPos + n <= size(src) && dstPos + n <= size(dst), "n out of range");
-
-			#if neko
-			untyped __dollar__ablit(dst, dstPos, src, srcPos, n);
-			#elseif cpp
-			cpp.NativeArray.blit(dst, dstPos, src, srcPos, n);
-			#else
-			if (src == dst) {
-				if (srcPos < dstPos) {
-					var i = srcPos + n;
-					var j = dstPos + n;
-					for (k in 0...n) {
-						i--;
-						j--;
-						set(src, j, get(src, i));
-					}
-				} else if (srcPos > dstPos) {
-					var i = srcPos;
-					var j = dstPos;
-					for (k in 0...n) {
-						set(src, j, get(src, i));
-						i++;
-						j++;
-					}
-				}
-			} else {
-				if (srcPos == 0 && dstPos == 0) {
-					for (i in 0...n)
-						dst[i] = src[i];
-				} else if (srcPos == 0) {
-					for (i in 0...n)
-						dst[dstPos + i] = src[i];
-				} else if (dstPos == 0) {
-					for (i in 0...n)
-						dst[i] = src[srcPos + i];
-				} else {
-					for (i in 0...n)
-						dst[dstPos + i] = src[srcPos + i];
-				}
-			}
-			#end
-		}
-	}
-
-	inline public static function copy<T>(src:NativeArray<T>):NativeArray<T> {
-		#if (neko || cpp)
-		var len = size(src);
-		var out = alloc(len);
-		blit(src, 0, out, 0, len);
-		return out;
-		#elseif flash
-		return src.slice(0);
-		#elseif js
-		return src.slice(0);
-		#elseif python
-		return src.copy();
-		#else
-		var len = size(src);
-		var dst = alloc(len);
+		len = capsArr.length;
+		caps.alloc(len);
 		for (i in 0...len)
-			set(dst, i, get(src, i));
-		return dst;
+			caps[i] = capsArr[i];
+		len = cap;
+		storage.alloc(len);
+		#if debug
+		final verifiedAlloc = verifyAlloc(_size);
+		Precondition.requires(verifiedAlloc, 'allocation of Dynamic Vector verified.');
+		state = verifiedAlloc ? Init : Error;
 		#end
+		state = Init;
 	}
 
-	#if (flash || java)
-	inline
+	#if debug
+	inline function verifyAlloc(?_size:Int) {
+		return true;
+	}
 	#end
-	public static function zero<T>(dst:NativeArray<T>, first:Int = 0, n:Int = 0):NativeArray<T> {
-		var min = first;
-		var max = n <= 0 ? size(dst) : min + n;
 
-		assert(min >= 0 && min < size(dst));
-		assert(max <= size(dst));
-
-		#if cpp
-		cpp.NativeArray.zero(dst, min, max - min);
-		#else
-		var val:Int = 0;
-		while (min < max)
-			set(dst, min++, cast val);
+	inline function doInit(_first:Int, _n:Int, _val:T) {
+		final firstIsLteMaxCap = idxLteMaxCap(_first);
+		#if debug
+		Precondition.requires(firstIsLteMaxCap, "first index is less than or equal to maximum capacity.");
 		#end
-
-		return dst;
-	};
-
-	public static function init<T>(a:NativeArray<T>, val:T, first:Int = 0, n:Int = 0):NativeArray<T> {
-		var min = first;
-		var max = n <= 0 ? size(a) : min + n;
-
-		assert(min >= 0 && min < size(a));
-		assert(max <= size(a));
-
-		while (min < max)
-			set(a, min++, val);
-		return a;
-	}
-
-	public static function nullify<T>(a:NativeArray<T>, first:Int = 0, n:Int = 0):NativeArray<T> {
-		var min = first;
-		var max = n <= 0 ? size(a) : min + n;
-
-		assert(min >= 0 && min < size(a));
-		assert(max <= size(a));
-
-		#if cpp
-		cpp.NativeArray.zero(a, min, max - min);
-		#else
-		while (min < max)
-			set(a, min++, cast null);
+		if (firstIsLteMaxCap) {
+			final lastIdx = _first + _n;
+			if (lastIdx <= cap) {
+				len = _n + 1;
+				for (i in _first...len)
+					storage[i] = _val;
+			} else {
+				doCapIdx(lastIdx);
+				len = lastIdx;
+				doAlloc(len);
+				for (i in _first...len)
+					storage[i] = _val;
+			}
+		} else
+			dirty = true;
+		#if debug
+		Precondition.requires(!dirty, 'can initialize at index "_first" for "_n" number of positions.');
 		#end
-
-		return a;
+		state = dirty ? Error : Init;
+		#if debug
+		final verifiedInit = verifyInit(_first, _n, _val);
+		Precondition.requires(verifiedInit, 'initialization of Dynamic Vector verified.');
+		state = verifiedInit ? Init : Error;
+		#end
 	}
 
-	public static function binarySearchCmp<T>(a:NativeArray<T>, val:T, min:Int, max:Int, cmp:T->T->Int):Int {
-		assert(a != null);
-		assert(cmp != null);
-		assert(min >= 0 && min < size(a));
-		assert(max < size(a));
+	inline function verifyInit(_first:Int, _n:Int, _val:T) {
+		return true;
+	}
 
-		var l = min, m, h = max + 1;
-		while (l < h) {
-			m = l + ((h - l) >> 1);
-			if (cmp(get(a, m), val) < 0)
-				l = m + 1;
-			else
-				h = m;
+	inline function doCapIdx(_idx:Int) {
+		var idxLteCap = false;
+		for (i in 0...caps.length) {
+			idxLteCap = _idx <= caps[i];
+			if (idxLteCap) {
+				capIdx = i;
+				break;
+			}
 		}
-
-		if ((l <= max) && cmp(get(a, l), val) == 0)
-			return l;
+		#if debug
+		Precondition.requires(idxLteCap, 'index where "_first" starts and ends at "_n" position is less than or equal to current capacity');
+		#end
+		if (idxLteCap)
+			return;
 		else
-			return ~l;
+			state = Error;
 	}
 
-	public static function binarySearchf(a:NativeArray<Float>, val:Float, min:Int, max:Int):Int {
-		assert(a != null);
-		assert(min >= 0 && min < size(a));
-		assert(max < size(a));
-
-		var l = min, m, h = max + 1;
-		while (l < h) {
-			m = l + ((h - l) >> 1);
-			if (get(a, m) < val)
-				l = m + 1;
-			else
-				h = m;
+	public inline function init(?_vec:DynamicVector<T>, _val:T, _first:Int = 0, _n:Int = 0) {
+		switch (state) {
+			case None:
+				onInit(true, _first, _n, _val);
+			case Init:
+				onInit(false, _first, _n, _val);
+			case _:
+				final isNone = state == None;
+				final isInit = state == Init;
+				final canInit = isNone || isInit;
+				#if debug
+				Precondition.requires(canInit, 'can initialize dynamic vector.');
+				#end
+				if (canInit) {
+					if (isNone) {
+						onInit(true, _first, _n, _val);
+					}
+					if (isInit)
+						onInit(false, _first, _n, _val);
+				} else
+					dirty = true;
 		}
-
-		if ((l <= max) && (get(a, l) == val))
-			return l;
-		else
-			return ~l;
+		return dirty ? null : this;
 	}
 
-	public static function binarySearchi(a:NativeArray<Int>, val:Int, min:Int, max:Int):Int {
-		assert(a != null);
-		assert(min >= 0 && min < size(a));
-		assert(max < size(a));
+	inline function onInit(_isNone:Bool, _first:Int, _n:Int, _val:T) {
+		if (_isNone) {
+			doAlloc(_n);
+			doInit(_first, _n, _val);
+		} else
+			doInit(_first, _n, _val);
+	}
 
-		var l = min, m, h = max + 1;
-		while (l < h) {
-			m = l + ((h - l) >> 1);
-			if (get(a, m) < val)
-				l = m + 1;
-			else
-				h = m;
+	public inline function get(_idx:Int) {
+		final idxLteCap = idxLteCap(_idx);
+		#if debug
+		Precondition.requires(idxLteCap, '"_idx" is less than or equal to maximum capacity.');
+		#end
+		return idxLteCap ? storage[_idx] : null;
+	}
+
+	public inline function set(_idx:Int, _item:T) {
+		final idxLteMaxCap = idxLteMaxCap(_idx);
+		#if debug
+		Precondition.requires(idxLteMaxCap, "index is less than or equal to maximum capacity.");
+		#end
+		final idxLteCap = idxLteCap(_idx);
+		if (idxLteCap) {
+			storage[_idx] = _item;
+			state = Set;
+		} else {
+			if (idxLteMaxCap) {
+				doCapIdx(_idx);
+				var s:Vector<T>;
+				s.alloc(cap);
+				len = storage.length;
+				for (i in 0...len)
+					s[i] = storage[i];
+				storage = s;
+				set(_idx, _item);
+			} else
+				state = Error;
 		}
+	}
 
-		if ((l <= max) && (get(a, l) == val))
-			return l;
-		else
-			return ~l;
-	}
-	}
- */
+	inline function idxLteCap(_idx:Int)
+		return _idx <= cap;
+
+	inline function idxLteMaxCap(_idx:Int)
+		return _idx <= maxCap;
+
+	public inline function add(_item:T) {}
+
+	public inline function remove(_idx:Int) {}
+
+	public inline function swap(_from:Int, _to:Int) {}
+}
+
+enum State {
+	None;
+	Init;
+	Set;
+	Error;
+}
