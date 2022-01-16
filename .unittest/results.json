@@ -2,21 +2,67 @@
 	"name": "root",
 	"classes": [
 		{
-			"name": "tools.ecs.core.EntityManagerTests",
+			"name": "tools.ds.DynamicVectorToolsTests",
 			"pos": {
-				"line": 7,
-				"file": "test/tools/ecs/core/EntityManagerTests.hx"
+				"line": 11,
+				"file": "test/tools/ds/DynamicVectorToolsTests.hx"
 			},
-			"id": "tools.ecs.core.EntityManagerTests",
+			"id": "tools.ds.DynamicVectorToolsTests",
 			"methods": [
 				{
-					"name": "test_init_is_valid",
-					"line": 15,
+					"name": "test_caps_valid",
+					"line": 36,
 					"executionTime": 0,
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1641704903.4550912
+					"timestamp": 1642300609.8885071
+				},
+				{
+					"name": "test_size_valid",
+					"line": 19,
+					"executionTime": 0,
+					"errorLine": null,
+					"state": "success",
+					"message": null,
+					"timestamp": 1642300609.8885071
+				}
+			]
+		},
+		{
+			"name": "tools.ds.VectorToolsTests",
+			"pos": {
+				"line": 8,
+				"file": "test/tools/ds/VectorToolsTests.hx"
+			},
+			"id": "tools.ds.VectorToolsTests",
+			"methods": [
+				{
+					"name": "test_alloc_valid",
+					"line": 16,
+					"executionTime": 0,
+					"errorLine": null,
+					"state": "success",
+					"message": null,
+					"timestamp": 1642300609.8885071
+				},
+				{
+					"name": "test_init_valid",
+					"line": 37,
+					"executionTime": 0,
+					"errorLine": null,
+					"state": "success",
+					"message": null,
+					"timestamp": 1642300609.8885071
+				},
+				{
+					"name": "test_trim_valid",
+					"line": 71,
+					"executionTime": 0,
+					"errorLine": null,
+					"state": "success",
+					"message": null,
+					"timestamp": 1642300609.8885071
 				}
 			]
 		}

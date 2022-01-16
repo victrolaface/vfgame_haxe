@@ -1,3 +1,4 @@
+/*
 #if debug
 package tools.ecs.core;
 
@@ -38,3 +39,4 @@ import tools.ecs.core.EntityManager;
 		return sut.currentState == "Init";
 }
 #end
+*/

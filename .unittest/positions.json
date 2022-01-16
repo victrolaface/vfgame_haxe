@@ -1,27 +1,56 @@
 {
-	"tools.ecs.core.EntityManagerTests": {
+	"tools.ds.DynamicVectorToolsTests": {
 		"pos": {
-			"line": 7,
-			"file": "test/tools/ecs/core/EntityManagerTests.hx"
+			"line": 11,
+			"file": "test/tools/ds/DynamicVectorToolsTests.hx"
 		},
 		"methods": {
-			"test_init_is_valid": {
-				"line": 15
+			"maxSize": {
+				"line": 12
 			},
-			"canUpdateFromInit": {
-				"line": 10
+			"test_size_valid": {
+				"line": 19
 			},
-			"get_canUpdateFromInit": {
-				"line": 33
+			"len": {
+				"line": 14
 			},
-			"stateIsInit": {
-				"line": 9
+			"validateCaps": {
+				"line": 53
 			},
-			"get_stateIsInit": {
+			"test_caps_valid": {
 				"line": 36
 			},
-			"sut": {
-				"line": 8
+			"defaultCap": {
+				"line": 13
+			}
+		}
+	},
+	"tools.ds.VectorToolsTests": {
+		"pos": {
+			"line": 8,
+			"file": "test/tools/ds/VectorToolsTests.hx"
+		},
+		"methods": {
+			"test_trim_valid": {
+				"line": 71
+			},
+			"n": {
+				"line": 9
+			},
+			"validateIter": {
+				"line": 58
+			},
+			"test_init_valid": {
+				"line": 37
+			},
+			"len": {
+				"line": 10
+			},
+			"idx": {
+				"line": 11
+			},
+			"test_alloc_valid": {
+				"line": 16
 			}
 		}
 	}

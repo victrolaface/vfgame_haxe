@@ -1,34 +1,54 @@
 package tools.ds;
 
 import haxe.ds.Vector;
-#if debug
 import tools.debug.Precondition;
-#end
 
 @:structInit class VectorTools {
-	static var dirty:Bool;
 	static var len:Int;
 
-	static public inline function alloc<T>(?_vec:Vector<T>, _len:Int) {
-		dirty = _len < 0;
+	static public inline function alloc<T>(_vec:Vector<T>, _len:Int) {
+		len = _vec.length;
+		final canAlloc = _len >= 0;
+
 		#if debug
-		Precondition.requires(!dirty);
+		Precondition.requires(canAlloc, '"_len" is greater than or equal to zero');
 		#end
-		if (dirty) {
-			onDirty();
-			return null;
+
+		if (_len <= len) {
+			for (i in 0..._len)
+				_vec[i] = null;
 		} else {
-			var vec:Vector<T>;
-			len = _vec == null ? _len : _vec.length;
-			len = len == _len ? len : _len;
-			vec = new Vector<T>(len);
 			for (i in 0...len)
-				vec[i] = null;
-			return vec;
+				_vec[i] = null;
 		}
+		return canAlloc ? _vec : null;
+	}
+
+	public static inline function init<T>(_vec:Vector<T>, _val:T, _first:Int = 0, _n:Int = 0) {
+		len = _vec.length;
+		var min = _first;
+		final max = _n <= 0 ? len : min + _n;
+		final minGteZero = min >= 0;
+		final minLtLen = min < len;
+		final maxLteLen = max <= len;
+		final canInit = minGteZero && minLtLen && maxLteLen;
+
+		#if debug
+		Precondition.requires(minGteZero, '"_first" greater than or equal to zero');
+		Precondition.requires(minLtLen, '"_first" less than "_vec" length');
+		Precondition.requires(maxLteLen, '"_max" less than or equal to "_vec" length');
+		#end
+
+		while (min < max)
+			_vec[min++] = _val;
+		return canInit ? _vec : null;
 	}
 
 	public static inline function trim<T>(_vec:Vector<T>, _len:Int) {
+		#if debug
+		Precondition.requires(_len >= 0, '"_len" greater than or equal to zero');
+		#end
+
 		len = _vec.length;
 		if (len > _len) {
 			var arr = _vec.toArray();
@@ -41,6 +61,13 @@ import tools.debug.Precondition;
 		} else
 			return _vec;
 	}
+	/*public static inline function toString<T>(_vec:Vector<T>) {
+		var vecArr = _vec.toArray();
+		return vecArr.toString();
+	}*/
+}
+/*
+
 
 	public static inline function swap<T>(_vec:Vector<T>, _a:Int, _b:Int) {
 		len = _vec.length;
@@ -74,24 +101,6 @@ import tools.debug.Precondition;
 		}
 	}
 
-	public static inline function init<T>(_vec:Vector<T>, _val:T, _first:Int = 0, _n:Int = 0) {
-		len = _vec.length;
-		var min = _first;
-		final max = _n <= 0 ? len : min + _n;
-		dirty = min < 0 || min >= len || max > len;
-		#if debug
-		Precondition.requires(!dirty);
-		#end
-		if (dirty) {
-			onDirty();
-			return null;
-		} else {
-			while (min < max)
-				_vec[min++] = _val;
-			return _vec;
-		}
-	}
-
 	public static function blit<T>(_src:Vector<T>, _srcPos:Int, _dst:Vector<T>, _dstPos:Int, _n:Int) {
 		if (_n > 0) {
 			final srcLen = _src.length;
@@ -102,7 +111,7 @@ import tools.debug.Precondition;
 			#if debug
 			Precondition.requires(srcPosLtSrcLen, "position of source in range.");
 			Precondition.requires(dstPosLtDstLen, "position of destination array in range.");
-			Precondition.requires(srcPosInRange, "_n in range");
+			Precondition.requires(srcPosInRange, '"_n" in range');
 			#end
 			dirty = !srcPosLtSrcLen || !dstPosLtDstLen || !srcPosInRange;
 			if (dirty) {
@@ -380,7 +389,7 @@ import tools.debug.Precondition;
 	public static inline function split<T>(_vec:Vector<T>, _n:Int, _k:Int) {
 		dirty = _n % _k != 0;
 		#if debug
-		Precondition.requires(!dirty, "n is multiple of k.");
+		Precondition.requires(!dirty, '"_n" is multiple of "_k".');
 		#end
 		if (dirty) {
 			onDirty();
@@ -442,4 +451,5 @@ import tools.debug.Precondition;
 
 	static inline function onDirty()
 		dirty = dirty ? !dirty : false;
-}
+	}
+ */

@@ -1,16 +1,79 @@
 package tools.ds;
 
 import haxe.ds.Vector;
-#if debug
-import tools.debug.Precondition;
-#end
+import tools.ds.DynamicVectorTools;
 
 using tools.ds.VectorTools;
 
 @:structInit class DynamicVector<T> {
-	final DEFAULT_SIZE = 64;
-	final MAX_SIZE = 524288;
+	var size:Int;
+	var count:Int;
+	var capIdx:Int;
+	var caps:Vector<Int>;
+	var storage:Vector<T>;
+	var state:State;
 
+	var cap(get, never):Int;
+	var maxCap(get, never):Int;
+
+	public var length(get, never):Int;
+
+	public inline function new(?_size:Int) {
+		size = DynamicVectorTools.size(_size);
+		caps = DynamicVectorTools.caps(maxCap);
+		capIdx = 0;
+		storage = new Vector<T>(cap);
+		storage.alloc(cap);
+		count = 0;
+		state = Alloc;
+	}
+
+	inline function get_maxCap()
+		return size;
+
+	inline function get_cap()
+		return caps[capIdx];
+
+	inline function get_length()
+		return cap;
+}
+
+enum State {
+	None;
+	Alloc;
+	Init;
+	Set;
+	Error;
+}
+/*
+	import haxe.ds.Vector;
+	#if debug
+	import tools.debug.Precondition;
+	import haxe.Json;
+	#end
+
+	using tools.ds.VectorTools;
+	using tools.ds.DynamicVectorTools;
+
+	// using Std;
+	#if debug
+	typedef Report = {
+	count:Int,
+	size:Int,
+	storage:String,
+	maxCap:Int,
+	caps:Array<Int>,
+	capIdx:Int,
+	state:String,
+	cap:Int,
+	hasNextCap:Bool,
+	nextCap:Int
+	}
+	#end
+
+	@:structInit class DynamicVector<T> {
+	/*final DEFAULT_SIZE = 64;
+	final MAX_SIZE = 1048576; */ /*
 	var dirty:Bool;
 	var count:Int;
 	var size:Int;
@@ -21,10 +84,45 @@ using tools.ds.VectorTools;
 	var idx:Int;
 	var len:Int;
 	var state:State = None;
-	var className:String;
 	var cap(get, never):Int;
 	var hasNextCap(get, never):Bool;
 	var nextCap(get, never):Int;
+	var maxCapGtDefault(get, never):Bool;
+
+	#if debug
+	public var report(get, never):String;
+	public var canInit(get, never):Bool;
+	public var stateName(get, never):String;
+
+	public var canAlloc(get, never):Bool;
+
+	var capDirty:Bool;
+
+	public inline function get_canAlloc()
+		return verifyAlloc();
+
+	public inline function get_canInit()
+		return verifyAlloc();
+
+	public inline function get_stateName()
+		return state.getName();
+
+	public inline function get_report() {
+		var r:Report = {
+			count: count,
+			size: size,
+			storage: storage.toArray().toString(),
+			maxCap: maxCap,
+			caps: caps.toArray(),
+			capIdx: capIdx,
+			state: Std.string(state),
+			cap: cap,
+			hasNextCap: hasNextCap,
+			nextCap: nextCap
+		};
+		return Json.stringify(r);
+	}
+	#end
 
 	inline function get_hasNextCap() {
 		len = caps.length;
@@ -39,53 +137,30 @@ using tools.ds.VectorTools;
 	public var length(get, never):Int;
 
 	inline function get_length()
-		return maxCap;
+		return cap;
 
 	inline function get_cap()
 		return caps[capIdx];
 
-	public inline function new(?_size:Int)
-		doAlloc(_size);
+	inline function get_maxCap()
+		return caps[caps.length];
 
-	inline function onDirty()
+
+
+	inline function onDirty() {
 		dirty = dirty ? !dirty : false;
-
-	inline function doAlloc(?_size:Int) {
-		maxCap = _size == null || _size <= 0 ? DEFAULT_SIZE : _size;
-		maxCap = size;
-		final capGtDefault = maxCap > DEFAULT_SIZE;
-		var capsArr = new Array<Int>();
-		idx = 0;
-		capIdx = idx;
-		capsArr[capIdx] = capGtDefault ? DEFAULT_SIZE : maxCap;
-		if (capGtDefault) {
-			var addCap = true;
-			do {
-				var nextCap = capsArr[idx] * 2;
-				idx++;
-				var add = nextCap < maxCap;
-				capsArr[idx] = add ? nextCap : maxCap;
-				addCap = add;
-			} while (addCap);
-		}
-		len = capsArr.length;
-		caps.alloc(len);
-		for (i in 0...len)
-			caps[i] = capsArr[i];
-		len = cap;
-		storage.alloc(len);
-		#if debug
-		final verifiedAlloc = verifyAlloc(_size);
-		Precondition.requires(verifiedAlloc, 'allocation of Dynamic Vector verified.');
-		state = verifiedAlloc ? Init : Error;
-		#end
-		state = Init;
+		return dirty;
 	}
+
+	inline function get_maxCapGtDefault()
+		return maxCap > DEFAULT_SIZE;
+
+
 
 	#if debug
-	inline function verifyAlloc(?_size:Int) {
-		return true;
-	}
+	inline function doSizeValid() {}
+
+	inline function verifyAlloc() {}
 	#end
 
 	inline function doInit(_first:Int, _n:Int, _val:T) {
@@ -93,6 +168,7 @@ using tools.ds.VectorTools;
 		#if debug
 		Precondition.requires(firstIsLteMaxCap, "first index is less than or equal to maximum capacity.");
 		#end
+
 		if (firstIsLteMaxCap) {
 			final lastIdx = _first + _n;
 			if (lastIdx <= cap) {
@@ -102,7 +178,8 @@ using tools.ds.VectorTools;
 			} else {
 				doCapIdx(lastIdx);
 				len = lastIdx;
-				doAlloc(len);
+				size = len;
+				doAlloc();
 				for (i in _first...len)
 					storage[i] = _val;
 			}
@@ -117,11 +194,11 @@ using tools.ds.VectorTools;
 		Precondition.requires(verifiedInit, 'initialization of Dynamic Vector verified.');
 		state = verifiedInit ? Init : Error;
 		#end
+		state = Init;
 	}
 
-	inline function verifyInit(_first:Int, _n:Int, _val:T) {
+	inline function verifyInit(_first:Int, _n:Int, _val:T)
 		return true;
-	}
 
 	inline function doCapIdx(_idx:Int) {
 		var idxLteCap = false;
@@ -141,7 +218,7 @@ using tools.ds.VectorTools;
 			state = Error;
 	}
 
-	public inline function init(?_vec:DynamicVector<T>, _val:T, _first:Int = 0, _n:Int = 0) {
+	public inline function init(_val:T, _first:Int = 0, _n:Int = 0) {
 		switch (state) {
 			case None:
 				onInit(true, _first, _n, _val);
@@ -168,7 +245,10 @@ using tools.ds.VectorTools;
 
 	inline function onInit(_isNone:Bool, _first:Int, _n:Int, _val:T) {
 		if (_isNone) {
-			doAlloc(_n);
+			len = _first > 0 ? _first : 0;
+			len += _n;
+			size = len;
+			doAlloc();
 			doInit(_first, _n, _val);
 		} else
 			doInit(_first, _n, _val);
@@ -194,7 +274,7 @@ using tools.ds.VectorTools;
 		} else {
 			if (idxLteMaxCap) {
 				doCapIdx(_idx);
-				var s:Vector<T>;
+				var s = new Vector<T>(cap); // Vector<T>;
 				s.alloc(cap);
 				len = storage.length;
 				for (i in 0...len)
@@ -217,11 +297,6 @@ using tools.ds.VectorTools;
 	public inline function remove(_idx:Int) {}
 
 	public inline function swap(_from:Int, _to:Int) {}
-}
+	}
 
-enum State {
-	None;
-	Init;
-	Set;
-	Error;
-}
+ */
