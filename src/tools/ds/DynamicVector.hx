@@ -2,29 +2,29 @@ package tools.ds;
 
 import haxe.ds.Vector;
 import tools.ds.DynamicVectorTools;
+import tools.debug.Precondition;
 
 using tools.ds.VectorTools;
 
 @:structInit class DynamicVector<T> {
-	var size:Int;
-	var count:Int;
-	var capIdx:Int;
+	var size:Int = 0;
+	var count:Int = 0;
+	var capIdx:Int = 0;
+	var state:State = None;
 	var caps:Vector<Int>;
 	var storage:Vector<T>;
-	var state:State;
 
 	var cap(get, never):Int;
 	var maxCap(get, never):Int;
+	var hasNextCap(get, never):Bool;
 
 	public var length(get, never):Int;
 
 	public inline function new(?_size:Int) {
 		size = DynamicVectorTools.size(_size);
 		caps = DynamicVectorTools.caps(maxCap);
-		capIdx = 0;
 		storage = new Vector<T>(cap);
 		storage.alloc(cap);
-		count = 0;
 		state = Alloc;
 	}
 
@@ -36,6 +36,82 @@ using tools.ds.VectorTools;
 
 	inline function get_length()
 		return cap;
+
+	inline function get_hasNextCap()
+		return capIdx + 1 < caps.length;
+
+	inline function hasCapGte(_len:Int) {
+		final nextCap = capIdx + 1;
+		var has = false;
+		for (i in nextCap...caps.length) {
+			if (caps[i] >= _len)
+				has = true;
+			else
+				continue;
+		}
+		return has;
+	}
+
+	inline function capIdxGte(_len:Int) {
+		final nextCap = capIdx + 1;
+		var idxGteLen:Null<Int> = null;
+		for (i in nextCap...caps.length) {
+			if (caps[i] >= _len)
+				idxGteLen = i;
+			else
+				continue;
+		}
+		return idxGteLen != null ? idxGteLen : null;
+	}
+
+	public inline function alloc(_len:Int) {
+		final lenLteMaxCap = _len <= maxCap;
+		var allocToMaxCap = false;
+
+		#if debug
+		Precondition.requires(lenLteMaxCap, '"_len" is less than or equal to maximum capacity of $maxCap');
+		#end
+
+		if (lenLteMaxCap) {
+			if (_len <= cap)
+				storage.alloc(_len);
+			else {
+				if (hasNextCap && hasCapGte(_len)) {
+					final idxGteLen = capIdxGte(_len);
+					final idxGteLenIsNull = idxGteLen == null;
+					capIdx = idxGteLenIsNull ? capIdx : idxGteLen;
+					final capAtCapIdxIsGteLen = capIdx == idxGteLen;
+
+					#if debug
+					Precondition.requires(capAtCapIdxIsGteLen, '"_len" is less than or equal to capacity of $cap at index $capIdx');
+					#end
+
+					if (capAtCapIdxIsGteLen) {
+						storage = new Vector<T>(cap);
+						storage.alloc(_len);
+					} else
+						allocToMaxCap = true;
+				}
+			}
+		} else
+			allocToMaxCap = true;
+		if (allocToMaxCap) {
+			storage = new Vector<T>(maxCap);
+			storage.alloc(maxCap);
+		}
+	}
+
+	public inline function add(_item:T) {}
+
+	public inline function remove(_idx:Int) {}
+
+	public inline function swap(_from:Int, _to:Int) {}
+
+	public inline function init(_val:T, _first:Int = 0, _n:Int = 0) {}
+
+	public inline function get(_idx:Int) {}
+
+	public inline function set(_idx:Int, _item:T) {}
 }
 
 enum State {
@@ -124,12 +200,7 @@ enum State {
 	}
 	#end
 
-	inline function get_hasNextCap() {
-		len = caps.length;
-		idx = capIdx;
-		idx++;
-		return idx + 1 <= len;
-	}
+
 
 	inline function get_nextCap()
 		return hasNextCap ? caps[capIdx + 1] : cap;
@@ -253,6 +324,7 @@ enum State {
 		} else
 			doInit(_first, _n, _val);
 	}
+
 
 	public inline function get(_idx:Int) {
 		final idxLteCap = idxLteCap(_idx);
