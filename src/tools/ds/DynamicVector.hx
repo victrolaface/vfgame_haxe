@@ -19,6 +19,7 @@ using tools.ds.VectorTools;
 	var hasNextCap(get, never):Bool;
 
 	public var length(get, never):Int;
+	public var toString(get, never):String;
 
 	public inline function new(?_size:Int) {
 		size = DynamicVectorTools.size(_size);
@@ -41,9 +42,8 @@ using tools.ds.VectorTools;
 		return capIdx + 1 < caps.length;
 
 	inline function hasCapGte(_len:Int) {
-		final nextCap = capIdx + 1;
 		var has = false;
-		for (i in nextCap...caps.length) {
+		for (i in capIdx...caps.length) {
 			if (caps[i] >= _len)
 				has = true;
 			else
@@ -52,34 +52,43 @@ using tools.ds.VectorTools;
 		return has;
 	}
 
+	// ==========================================================================================
+
+	inline function get_toString() {
+		final c = caps.toArray().toString();
+		final s = storage.toArray().toString();
+		final r = 'capIdx: $capIdx \n caps: $c \n length: $cap \n storage: $s';
+		return r;
+	}
+
+	// ==========================================================================================
+
 	inline function capIdxGte(_len:Int) {
-		final nextCap = capIdx + 1;
 		var idxGteLen:Null<Int> = null;
-		for (i in nextCap...caps.length) {
-			if (caps[i] >= _len)
+		for (i in capIdx...caps.length) {
+			if (caps[i] >= _len) {
 				idxGteLen = i;
-			else
+				break;
+			} else
 				continue;
 		}
 		return idxGteLen != null ? idxGteLen : null;
 	}
 
 	public inline function alloc(_len:Int) {
-		final lenLteMaxCap = _len <= maxCap;
-		var allocToMaxCap = false;
-
+		final canAlloc = _len >= 0 && _len <= maxCap;
+		final canAllocAtNewCap = hasCapGte(_len);
 		#if debug
-		Precondition.requires(lenLteMaxCap, '"_len" is less than or equal to maximum capacity of $maxCap');
+		Precondition.requires(canAlloc, '"_len" greater than or equal to zero and less than or equal to maximum capacity of $maxCap');
 		#end
 
-		if (lenLteMaxCap) {
+		if (canAlloc) {
 			if (_len <= cap)
 				storage.alloc(_len);
 			else {
-				if (hasNextCap && hasCapGte(_len)) {
+				if (canAllocAtNewCap) {
 					final idxGteLen = capIdxGte(_len);
-					final idxGteLenIsNull = idxGteLen == null;
-					capIdx = idxGteLenIsNull ? capIdx : idxGteLen;
+					capIdx = idxGteLen == null ? capIdx : idxGteLen;
 					final capAtCapIdxIsGteLen = capIdx == idxGteLen;
 
 					#if debug
@@ -89,15 +98,49 @@ using tools.ds.VectorTools;
 					if (capAtCapIdxIsGteLen) {
 						storage = new Vector<T>(cap);
 						storage.alloc(_len);
-					} else
-						allocToMaxCap = true;
+					}
 				}
 			}
-		} else
-			allocToMaxCap = true;
-		if (allocToMaxCap) {
-			storage = new Vector<T>(maxCap);
-			storage.alloc(maxCap);
+		}
+	}
+
+	public inline function init(_val:T, _first:Int = 0, _n:Int = 0) {
+		final firstGteZero = _first >= 0;
+		final toIdx = _first + _n;
+		final maxCapGteToIdx = maxCap >= toIdx;
+		final canInit = firstGteZero && maxCapGteToIdx;
+		final canInitAtNewCap = hasCapGte(toIdx);
+
+		#if debug
+		final vOf = 'value of';
+		final fVal = '"_first" $vOf $_first index in storage';
+		final tE = 'than or equal to';
+		Precondition.requires(firstGteZero, '$fVal greater $tE zero');
+		Precondition.requires(maxCapGteToIdx, '"_n" $vOf $_n items starting at $fVal less $tE maximum capacity of $maxCap');
+		#end
+
+		if (canInit) {
+			if (toIdx <= cap) {} else {
+				if (canInitAtNewCap) {
+					final idxGteToIdx = capIdxGte(toIdx);
+					capIdx = idxGteToIdx == null ? capIdx : idxGteToIdx;
+					final capAtCapIdxIsGteToIdx = capIdx == idxGteToIdx;
+
+					#if debug
+					Precondition.requires(capAtCapIdxIsGteToIdx,
+						'capacity of value $cap greater $tE index of value $toIdx ending at $vOf "_n" $_n number of items, 
+					starting at $fVal');
+					#end
+
+					if (capAtCapIdxIsGteToIdx) {
+						var dst = new Vector<T>(cap);
+						dst.alloc(cap);
+						dst = storage.blit(0, dst, 0, storage.length);
+						dst.init(_val, _first, _n);
+						storage = dst;
+					}
+				}
+			}
 		}
 	}
 
@@ -106,8 +149,6 @@ using tools.ds.VectorTools;
 	public inline function remove(_idx:Int) {}
 
 	public inline function swap(_from:Int, _to:Int) {}
-
-	public inline function init(_val:T, _first:Int = 0, _n:Int = 0) {}
 
 	public inline function get(_idx:Int) {}
 

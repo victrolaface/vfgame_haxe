@@ -90,4 +90,6 @@ using tools.ds.VectorTools;
 		v = v.trim(8); // trim len < vec len
 		Assert.isTrue(v.length == 1);
 	}
+
+	// 1 - public inline function test_blit_valid(){}
 }

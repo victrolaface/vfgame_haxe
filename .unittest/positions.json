@@ -42,6 +42,9 @@
 			},
 			"sut": {
 				"line": 11
+			},
+			"test_alloc_valid": {
+				"line": 41
 			}
 		}
 	},

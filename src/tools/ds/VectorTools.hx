@@ -61,10 +61,62 @@ import tools.debug.Precondition;
 		} else
 			return _vec;
 	}
-	/*public static inline function toString<T>(_vec:Vector<T>) {
-		var vecArr = _vec.toArray();
-		return vecArr.toString();
-	}*/
+
+	public static function blit<T>(_src:Vector<T>, _srcPos:Int, _dst:Vector<T>, _dstPos:Int, _n:Int) {
+		final srcLen = _src.length;
+		final dstLen = _dst.length;
+		final srcAmount = _srcPos + _n;
+		final dstAmount = _dstPos + _n;
+		final canBlit = _n > 0 && srcAmount <= srcLen && dstAmount <= dstLen;
+
+		#if debug
+		Precondition.requires(_srcPos < _src.length, '"_srcPos" $_srcPos less than "_src" length of $srcLen');
+		Precondition.requires(_dstPos < _dst.length, '"_dstPos" $_dstPos less than "_dst" length of $dstLen');
+		Precondition.requires(canBlit, '"_n" of value $_n number of items in range to blit');
+		#end
+
+		if (canBlit) {
+			var i:Int;
+			var j:Int;
+			if (_src == _dst) {
+				if (_srcPos < _dstPos) {
+					i = srcAmount;
+					j = dstAmount;
+					for (k in 0..._n) {
+						i--;
+						j--;
+						_src[j] = _src[i];
+					}
+				} else if (_srcPos > _dstPos) {
+					i = _srcPos;
+					j = _dstPos;
+					for (k in 0..._n) {
+						_src[j] = _src[i];
+						i++;
+						j++;
+					}
+				}
+			} else {
+				final srcIsFirst = _srcPos == 0;
+				final dstIsFirst = _dstPos == 0;
+				if (srcIsFirst && dstIsFirst) {
+					for (i in 0..._n)
+						_dst[i] = _src[i];
+				} else if (srcIsFirst) {
+					for (i in 0..._n)
+						_dst[_dstPos + i] = _src[i];
+				} else if (dstIsFirst) {
+					for (i in 0..._n)
+						_dst[i] = _src[_srcPos + i];
+				} else {
+					for (i in 0..._n)
+						_dst[_dstPos + i] = _src[_srcPos + i];
+				}
+			}
+			return _dst;
+		} else
+			return null;
+	}
 }
 /*
 
@@ -98,69 +150,6 @@ import tools.debug.Precondition;
 		} else {
 			swap(_vec, _idx, 0);
 			return _vec[0];
-		}
-	}
-
-	public static function blit<T>(_src:Vector<T>, _srcPos:Int, _dst:Vector<T>, _dstPos:Int, _n:Int) {
-		if (_n > 0) {
-			final srcLen = _src.length;
-			final dstLen = _dst.length;
-			final srcPosLtSrcLen = _srcPos < srcLen;
-			final dstPosLtDstLen = _dstPos < dstLen;
-			final srcPosInRange = _srcPos + _n <= srcLen && _dstPos + _n <= dstLen;
-			#if debug
-			Precondition.requires(srcPosLtSrcLen, "position of source in range.");
-			Precondition.requires(dstPosLtDstLen, "position of destination array in range.");
-			Precondition.requires(srcPosInRange, '"_n" in range');
-			#end
-			dirty = !srcPosLtSrcLen || !dstPosLtDstLen || !srcPosInRange;
-			if (dirty) {
-				onDirty();
-			} else {
-				var src = new Array<T>();
-				var dst = new Array<T>();
-				for (i in 0...srcLen)
-					src[i] = _src[i];
-				for (i in 0...dstLen)
-					dst[i] = _dst[i];
-				if (src == dst) {
-					if (_srcPos < _dstPos) {
-						var i = _srcPos + _n;
-						var j = _dstPos + _n;
-						for (k in 0..._n) {
-							i--;
-							j--;
-							src[j] = src[i];
-						}
-					} else if (_srcPos > _dstPos) {
-						var i = _srcPos;
-						var j = _dstPos;
-						for (k in 0..._n) {
-							src[j] = src[i];
-							i++;
-							j++;
-						}
-					}
-				} else {
-					if (_srcPos == 0 && _dstPos == 0) {
-						for (i in 0..._n)
-							dst[i] = src[i];
-					} else if (_srcPos == 0) {
-						for (i in 0..._n)
-							dst[_dstPos + i] = src[i];
-					} else if (_dstPos == 0) {
-						for (i in 0..._n)
-							dst[i] = src[_srcPos + i];
-					} else {
-						for (i in 0..._n)
-							dst[_dstPos + i] = src[_srcPos + i];
-					}
-				}
-				len = dst.length;
-				_dst = new Vector(len);
-				for (i in 0...len)
-					_dst[i] = dst[i];
-			}
 		}
 	}
 

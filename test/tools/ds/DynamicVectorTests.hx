@@ -38,7 +38,33 @@ import tools.ds.DynamicVectorTools;
 			sut = new DynamicVector<Int>(maxSize + 1);
 		});
 	}
-	/*public inline function test_alloc_valid(){
 
-	}*/
+	public inline function test_alloc_valid() {
+		sut = new DynamicVector<Int>();
+		sut.alloc(12);
+		Assert.isTrue(sut.length == defaultCap);
+		sut = new DynamicVector<Int>(defaultCap - 1);
+		sut.alloc(1);
+		Assert.isTrue(sut.length == defaultCap - 1);
+		sut = new DynamicVector<Int>(defaultCap);
+		sut.alloc(10);
+		Assert.isTrue(sut.length == defaultCap);
+		sut = new DynamicVector<Int>(defaultCap * 2 + 10);
+		sut.alloc(2);
+		Assert.isTrue(sut.length == defaultCap);
+		sut.alloc(defaultCap + 1);
+		Assert.isTrue(sut.length == defaultCap * 2);
+		sut.alloc(defaultCap * 2 + 2);
+		Assert.isTrue(sut.length == defaultCap * 2 + 10);
+		Assert.raises(() -> {
+			sut = new DynamicVector<Int>(0);
+			sut.alloc(1); // alloc gt size
+		});
+		Assert.raises(() -> {
+			sut = new DynamicVector<Int>(maxSize);
+			sut.alloc(-1); // alloc lt zero
+		});
+	}
+
+	// 2 - public inline function test_init_valid() {}
 }
