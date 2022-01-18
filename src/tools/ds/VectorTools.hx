@@ -63,58 +63,47 @@ import tools.debug.Precondition;
 	}
 
 	public static function blit<T>(_src:Vector<T>, _srcPos:Int, _dst:Vector<T>, _dstPos:Int, _n:Int) {
-		final nGtZero = _n > 0;
 		final srcLen = _src.length;
 		final srcPosLtLen = _srcPos < srcLen;
-		final srcPosLast = _srcPos + _n - 1;
-		final srcPosLastLtLen = srcPosLast < srcLen;
-		final srcAmt = amt(_srcPos, srcPosLast);
-		final srcAmtIsN = srcAmt == _n;
 		final dstLen = _dst.length;
 		final dstPosLtLen = _dstPos < dstLen;
-		final dstPosLast = _dstPos + _n - 1;
-		final dstPosLastLtLen = dstPosLast < dstLen;
-		final dstAmt = amt(_dstPos, dstPosLast);
-		final dstAmtIsN = dstAmt == _n;
-		final canBlit = srcPosLtLen && srcPosLastLtLen && srcAmtIsN && dstPosLtLen && dstPosLastLtLen && dstAmtIsN;
 
 		#if debug
-		Precondition.requires(nGtZero, '"_n" of value $_n is greater than zero');
 		Precondition.requires(srcPosLtLen, '"_srcPos" at index $_srcPos less than length of $srcLen of vector "_src"');
-		Precondition.requires(srcPosLastLtLen, 'index at $srcPosLast less than length of $srcLen of vector "_src"');
-		Precondition.requires(srcAmtIsN, '$srcAmt amount of items blitted from vector "_src" equal to "_n" of value $_n');
 		Precondition.requires(dstPosLtLen, '"_dstPos" at index $_dstPos less than length of $dstLen of vector "_dst"');
-		Precondition.requires(dstPosLastLtLen, 'index at $dstPosLast less than length of $dstLen of vector "_dst"');
-		Precondition.requires(dstAmtIsN, '$dstAmt amount of items blitted from vector "_dst" equal to "_n" of value $_n');
 		#end
 
-		var retDst = true;
+		var doBlit = srcPosLtLen && dstPosLtLen && _srcPos + _n < srcLen && _dstPos + _n < dstLen && _n > 0;
+		var dstBlitted = new Vector<T>(dstLen);
 
-		if (canBlit) {
-			if (nGtZero) {
-				var src = new Vector<T>(_n);
-				var len = srcPosLast + 1;
-				var idx = -1;
-				for (i in _srcPos...len) {
+		if (doBlit) {
+			final srcPosLast = posAt(_srcPos, _n);
+			final dstPosLast = posAt(_dstPos, _n);
+			var srcTrimmed = new Vector<T>(_n);
+			var idx = -1;
+			for (i in _srcPos...srcPosLast + 1) {
+				idx++;
+				srcTrimmed[idx] = _src[i];
+			}
+			final srcTrimmedLen = srcTrimmed.length;
+			final srcAmt = amt(_srcPos, srcPosLast);
+			final dstAmt = amt(_dstPos, dstPosLast);
+			if (isAmt(srcTrimmedLen, srcAmt, dstAmt, _n)) {
+				for (i in 0...dstLen)
+					dstBlitted[i] = _dst[i];
+				idx = -1;
+				for (i in _dstPos...dstPosLast + 1) {
 					idx++;
-					src[idx] = _src[i];
+					dstBlitted[i] = srcTrimmed[idx];
 				}
-				final srcIsAmt = isAmt(src.length, srcAmt, dstAmt, _n);
-				if (srcIsAmt) {
-					len = dstPosLast + 1;
-					idx = -1;
-					for (i in _dstPos...len) {
-						idx++;
-						_dst[i] = src[idx];
-					}
-					len = idx + 1;
-					final lenIsAmt = isAmt(len, srcAmt, dstAmt, src.length, _n);
-					retDst = lenIsAmt;
-				}
+				doBlit = isAmt(idx + 1, srcAmt, dstAmt, srcTrimmedLen, _n);
 			}
 		}
-		return retDst ? _dst : null;
+		return doBlit ? dstBlitted : _dst;
 	}
+
+	static inline function posAt(_initPos:Int, _n:Int)
+		return _initPos + _n - 1;
 
 	static inline function isAmt(_len:Int, _amt1:Int, _amt2:Int, _amt3:Int, ?_amt4:Int) {
 		final notNull = _amt4 != null;

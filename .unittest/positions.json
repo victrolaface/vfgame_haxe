@@ -64,13 +64,10 @@
 				"line": 9
 			},
 			"validateBlit": {
-				"line": 151
+				"line": 164
 			},
 			"validateIter": {
 				"line": 58
-			},
-			"blitAmt": {
-				"line": 243
 			},
 			"test_init_valid": {
 				"line": 37
@@ -78,8 +75,8 @@
 			"len": {
 				"line": 10
 			},
-			"initRandom": {
-				"line": 236
+			"intVector": {
+				"line": 156
 			},
 			"idx": {
 				"line": 11
