@@ -57,17 +57,29 @@
 			"test_trim_valid": {
 				"line": 71
 			},
+			"test_blit_valid": {
+				"line": 93
+			},
 			"n": {
 				"line": 9
 			},
+			"validateBlit": {
+				"line": 151
+			},
 			"validateIter": {
 				"line": 58
+			},
+			"blitAmt": {
+				"line": 243
 			},
 			"test_init_valid": {
 				"line": 37
 			},
 			"len": {
 				"line": 10
+			},
+			"initRandom": {
+				"line": 236
 			},
 			"idx": {
 				"line": 11

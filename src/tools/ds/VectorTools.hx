@@ -63,60 +63,86 @@ import tools.debug.Precondition;
 	}
 
 	public static function blit<T>(_src:Vector<T>, _srcPos:Int, _dst:Vector<T>, _dstPos:Int, _n:Int) {
+		final nGtZero = _n > 0;
 		final srcLen = _src.length;
+		final srcPosLtLen = _srcPos < srcLen;
+		final srcPosLast = _srcPos + _n - 1;
+		final srcPosLastLtLen = srcPosLast < srcLen;
+		final srcAmt = amt(_srcPos, srcPosLast);
+		final srcAmtIsN = srcAmt == _n;
 		final dstLen = _dst.length;
-		final srcAmount = _srcPos + _n;
-		final dstAmount = _dstPos + _n;
-		final canBlit = _n > 0 && srcAmount <= srcLen && dstAmount <= dstLen;
+		final dstPosLtLen = _dstPos < dstLen;
+		final dstPosLast = _dstPos + _n - 1;
+		final dstPosLastLtLen = dstPosLast < dstLen;
+		final dstAmt = amt(_dstPos, dstPosLast);
+		final dstAmtIsN = dstAmt == _n;
+		final canBlit = srcPosLtLen && srcPosLastLtLen && srcAmtIsN && dstPosLtLen && dstPosLastLtLen && dstAmtIsN;
 
 		#if debug
-		Precondition.requires(_srcPos < _src.length, '"_srcPos" $_srcPos less than "_src" length of $srcLen');
-		Precondition.requires(_dstPos < _dst.length, '"_dstPos" $_dstPos less than "_dst" length of $dstLen');
-		Precondition.requires(canBlit, '"_n" of value $_n number of items in range to blit');
+		Precondition.requires(nGtZero, '"_n" of value $_n is greater than zero');
+		Precondition.requires(srcPosLtLen, '"_srcPos" at index $_srcPos less than length of $srcLen of vector "_src"');
+		Precondition.requires(srcPosLastLtLen, 'index at $srcPosLast less than length of $srcLen of vector "_src"');
+		Precondition.requires(srcAmtIsN, '$srcAmt amount of items blitted from vector "_src" equal to "_n" of value $_n');
+		Precondition.requires(dstPosLtLen, '"_dstPos" at index $_dstPos less than length of $dstLen of vector "_dst"');
+		Precondition.requires(dstPosLastLtLen, 'index at $dstPosLast less than length of $dstLen of vector "_dst"');
+		Precondition.requires(dstAmtIsN, '$dstAmt amount of items blitted from vector "_dst" equal to "_n" of value $_n');
 		#end
 
+		var retDst = true;
+
 		if (canBlit) {
-			var i:Int;
-			var j:Int;
-			if (_src == _dst) {
-				if (_srcPos < _dstPos) {
-					i = srcAmount;
-					j = dstAmount;
-					for (k in 0..._n) {
-						i--;
-						j--;
-						_src[j] = _src[i];
-					}
-				} else if (_srcPos > _dstPos) {
-					i = _srcPos;
-					j = _dstPos;
-					for (k in 0..._n) {
-						_src[j] = _src[i];
-						i++;
-						j++;
-					}
+			if (nGtZero) {
+				var src = new Vector<T>(_n);
+				var len = srcPosLast + 1;
+				var idx = -1;
+				for (i in _srcPos...len) {
+					idx++;
+					src[idx] = _src[i];
 				}
-			} else {
-				final srcIsFirst = _srcPos == 0;
-				final dstIsFirst = _dstPos == 0;
-				if (srcIsFirst && dstIsFirst) {
-					for (i in 0..._n)
-						_dst[i] = _src[i];
-				} else if (srcIsFirst) {
-					for (i in 0..._n)
-						_dst[_dstPos + i] = _src[i];
-				} else if (dstIsFirst) {
-					for (i in 0..._n)
-						_dst[i] = _src[_srcPos + i];
-				} else {
-					for (i in 0..._n)
-						_dst[_dstPos + i] = _src[_srcPos + i];
+				final srcIsAmt = isAmt(src.length, srcAmt, dstAmt, _n);
+				if (srcIsAmt) {
+					len = dstPosLast + 1;
+					idx = -1;
+					for (i in _dstPos...len) {
+						idx++;
+						_dst[i] = src[idx];
+					}
+					len = idx + 1;
+					final lenIsAmt = isAmt(len, srcAmt, dstAmt, src.length, _n);
+					retDst = lenIsAmt;
 				}
 			}
-			return _dst;
-		} else
+		}
+		return retDst ? _dst : null;
+	}
+
+	static inline function isAmt(_len:Int, _amt1:Int, _amt2:Int, _amt3:Int, ?_amt4:Int) {
+		final notNull = _amt4 != null;
+		final lenIsAmt = _len == _amt1 && _len == _amt2 && _len == _amt3;
+		return notNull ? lenIsAmt && _len == _amt4 : lenIsAmt;
+	}
+
+	static inline function amt(_pos1:Int, _pos2:Int) {
+		final len = _pos2 + 1;
+		var a = 0;
+		for (_ in _pos1...len)
+			a++;
+		return a;
+	}
+
+	#if debug
+	public static inline function toString<T>(_src:Vector<T>) {
+		final srcLen = _src.length;
+		final canParse = srcLen >= 0;
+
+		Precondition.requires(canParse, '"_src" length of $srcLen greater than or equal to zero');
+
+		if (canParse)
+			return _src.toArray().toString();
+		else
 			return null;
 	}
+	#end
 }
 /*
 
