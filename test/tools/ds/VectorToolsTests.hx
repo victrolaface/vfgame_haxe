@@ -7,64 +7,130 @@ import haxe.ds.Vector;
 using tools.ds.VectorTools;
 
 @:structInit class VectorToolsTests extends Test {
-	var n:Int;
-	var len:Int;
-	var idx:Int;
-
 	public inline function new()
 		super();
 
 	public inline function test_alloc_valid() {
-		len = 10;
-		var v = new Vector<Int>(len);
-		var val = 0;
-		n = 2;
-		for (i in 0...len)
-			v[i] = val;
-		v.alloc(n);
-		Assert.isTrue(validateIter(v, null, 0, n) && validateIter(v, val, n, len - n));
-		len = 1;
-		v = new Vector<Int>(len);
-		n = 9999;
-		v.alloc(n);
-		val = null;
-		Assert.isTrue(validateIter(v, val, 0, len));
-		Assert.raises(() -> { // _first/min lt zero
-			v = new Vector(1);
-			v.alloc(-1);
-		});
+		var srcItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+		var n = 10;
+		Assert.isTrue(validateAlloc(srcItems, n)); // n is vecLen
+		n = 5;
+		Assert.isTrue(validateAlloc(srcItems, n)); // n lt vecLen
+		n = 20;
+		Assert.isTrue(validateAlloc(srcItems, n)); // n gt vecLen
+		n = -1;
+		Assert.isTrue(validateAlloc(srcItems, n)); // n lt zero
+		n = 0;
+		Assert.isTrue(validateAlloc(srcItems, n)); // n is zero
+		srcItems = [];
+		n = 1;
+		Assert.isTrue(validateAlloc(srcItems, n)); // vec len is zero
+	}
+
+	inline function validateAlloc<T>(_srcItems:Array<T>, _n:Int) {
+		var valid = false;
+		final vecLen = _srcItems.length;
+		var vecInit = new Vector<T>(vecLen);
+		for (i in 0...vecLen)
+			vecInit[i] = _srcItems[i];
+		var vec = vecInit;
+		vec.alloc(_n);
+		if (_n > 0 && _n <= vecLen) {
+			for (i in 0..._n) {
+				valid = vec[i] == null;
+				if (valid)
+					continue;
+				else
+					break;
+			}
+			if (valid) {
+				if (_n != vecLen) {
+					for (i in _n - 1...vecLen - _n) {
+						valid = vec[i] == vecInit[i];
+						if (valid)
+							continue;
+						else
+							break;
+					}
+				}
+			}
+		} else
+			valid = vec == vecInit;
+		return valid;
 	}
 
 	public inline function test_init_valid() {
-		len = 10;
-		var v = new Vector<Int>(len);
+		var srcItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 		var val = 0;
-		n = 2;
-		v.init(val, 0, n);
-		Assert.isTrue(validateIter(v, val, 0, n) && validateIter(v, null, n, len - n));
-		Assert.raises(() -> { // _first/min lt zero
-			var v = new Vector<Int>(1);
-			v.init(1, -1, 2);
-		});
-		Assert.raises(() -> { // _first/min gte vector length
-			var v = new Vector<Int>(1);
-			v.init(1, 2, 1);
-		});
-		Assert.raises(() -> { // _max gt vector length
-			var v = new Vector<Int>(1);
-			v.init(1, 0, 99);
-		});
+		var first = 0;
+		var n = 10;
+		Assert.isTrue(validateInit(srcItems, val, first, n));
+		srcItems = [];
+		Assert.isTrue(validateInit(srcItems, val, first, n)); // vecLen is zero
+		srcItems = [1, 2, 3];
+		first = -1;
+		n = 1;
+		Assert.isTrue(validateInit(srcItems, val, first, n)); // first is lt zero
+		first = 0;
+		n = 0;
+		Assert.isTrue(validateInit(srcItems, val, first, n)); // n is lte zero
+		first = 3;
+		n = 1;
+		Assert.isTrue(validateInit(srcItems, val, first, n)); // first gt lastPos (vecLen - 1)
+		first = 0;
+		n = 4;
+		Assert.isTrue(validateInit(srcItems, val, first, n)); // lastPos (first + n) gt vec lastPos (vecLen - 1)
+		srcItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+		first = 0;
+		n = 5;
+		Assert.isTrue(validateInit(srcItems, val, first, n)); // n lt vec lastPos (vecLen - 1)
+		first = 4;
+		Assert.isTrue(validateInit(srcItems, val, first, n)); // first gt zero
+		first = 2;
+		n = 6;
+		Assert.isTrue(validateInit(srcItems, val, first, n)); // n lt vecLen, first gt zero, lastPos lt vec lastPos (vecLen - 1)
 	}
 
-	function validateIter<T>(_vec:Vector<T>, _val:T, _first:Int, _n:Int) {
-		var valid = true;
-		for (i in _first..._n) {
-			if (_vec[i] == _val)
-				continue;
-			else {
-				valid = false;
-				break;
-			}
+	inline function validateInit<T>(_srcItems:Array<T>, _val:T, _first:Int, _n:Int) {
+		final vecLen = _srcItems.length;
+		final last = _first + _n;
+		var valid = false;
+		var doValid = true;
+		var vecInit = new Vector<T>(vecLen);
+		for (i in 0...vecLen)
+			vecInit[i] = _srcItems[i];
+		var vec = vecInit;
+		vec.init(_val, _first, _n);
+		while (doValid) {
+			if (vecLen > 0 && _first >= 0 && _n > 0 && _first < vecLen && last < vecLen) {
+				for (i in _first...last + 1) {
+					valid = vec[i] == _val;
+					if (valid)
+						continue;
+					else
+						doValid = false;
+				}
+				if (_first > 0) {
+					for (i in 0..._first) {
+						valid = vec[i] == vecInit[i];
+						if (valid)
+							continue;
+						else
+							doValid = false;
+					}
+				}
+				if (last < vecLen - 1) {
+					for (i in last + 1...vecLen) {
+						valid = vec[i] == vecInit[i];
+						if (valid)
+							continue;
+						else
+							doValid = false;
+					}
+				}
+			} else
+				valid = vec == vecInit;
+			doValid = false;
 		}
 		return valid;
 	}

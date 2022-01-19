@@ -55,37 +55,31 @@
 		},
 		"methods": {
 			"test_trim_valid": {
-				"line": 71
+				"line": 137
 			},
 			"test_blit_valid": {
-				"line": 128
-			},
-			"n": {
-				"line": 9
+				"line": 174
 			},
 			"validateBlit": {
-				"line": 199
-			},
-			"validateIter": {
-				"line": 58
+				"line": 237
 			},
 			"test_init_valid": {
-				"line": 37
+				"line": 61
+			},
+			"validateAlloc": {
+				"line": 29
 			},
 			"validateTrim": {
-				"line": 104
+				"line": 150
 			},
-			"len": {
-				"line": 10
+			"validateInit": {
+				"line": 93
 			},
 			"intVector": {
-				"line": 191
-			},
-			"idx": {
-				"line": 11
+				"line": 304
 			},
 			"test_alloc_valid": {
-				"line": 16
+				"line": 12
 			}
 		}
 	}

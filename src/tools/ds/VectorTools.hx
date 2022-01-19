@@ -4,48 +4,27 @@ import haxe.ds.Vector;
 import tools.debug.Precondition;
 
 @:structInit class VectorTools {
-	static var len:Int;
-
 	static public inline function alloc<T>(_vec:Vector<T>, _len:Int) {
-		len = _vec.length;
-		final canAlloc = _len >= 0;
-
-		#if debug
-		Precondition.requires(canAlloc, '"_len" is greater than or equal to zero');
-		#end
-
-		if (_len <= len) {
+		final vecLen = _vec.length;
+		if (vecLen > 0 && _len > 0 && _len <= vecLen) {
 			for (i in 0..._len)
 				_vec[i] = null;
-		} else {
-			for (i in 0...len)
-				_vec[i] = null;
 		}
-		return canAlloc ? _vec : null;
+		return _vec;
 	}
 
 	public static inline function init<T>(_vec:Vector<T>, _val:T, _first:Int = 0, _n:Int = 0) {
-		len = _vec.length;
-		var min = _first;
-		final max = _n <= 0 ? len : min + _n;
-		final minGteZero = min >= 0;
-		final minLtLen = min < len;
-		final maxLteLen = max <= len;
-		final canInit = minGteZero && minLtLen && maxLteLen;
-
-		#if debug
-		Precondition.requires(minGteZero, '"_first" greater than or equal to zero');
-		Precondition.requires(minLtLen, '"_first" less than "_vec" length');
-		Precondition.requires(maxLteLen, '"_max" less than or equal to "_vec" length');
-		#end
-
-		while (min < max)
-			_vec[min++] = _val;
-		return canInit ? _vec : null;
+		final vecLen = _vec.length;
+		if (vecLen > 0 && _first >= 0 && _n > 0 && _first < vecLen && _first + _n < vecLen) {
+			for (i in _first..._first + _n + 1)
+				_vec[i] = _val;
+		}
+		return _vec;
 	}
 
 	public static inline function trim<T>(_vec:Vector<T>, _len:Int) {
-		if (_len >= 0 && _len < _vec.length) {
+		final vecLen = _vec.length;
+		if (vecLen > 0 && _len >= 0 && _len < _vec.length) {
 			var vec = new Vector<T>(_len);
 			if (_len > 0) {
 				for (i in 0..._len)
@@ -61,8 +40,6 @@ import tools.debug.Precondition;
 		final srcPosLtLen = _srcPos < srcLen;
 		final dstLen = _dst.length;
 		final dstPosLtLen = _dstPos < dstLen;
-		final srcPosZero = _srcPos == 0;
-		final dstPosZero = _dstPos == 0;
 
 		#if debug
 		Precondition.requires(srcPosLtLen, '"_srcPos" at index $_srcPos less than length of $srcLen of vector "_src"');
@@ -93,6 +70,8 @@ import tools.debug.Precondition;
 					}
 				}
 			} else {
+				final srcPosZero = _srcPos == 0;
+				final dstPosZero = _dstPos == 0;
 				if (srcPosZero && dstPosZero) {
 					for (i in 0..._n)
 						_dst[i] = _src[i];
