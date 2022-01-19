@@ -55,28 +55,25 @@
 		},
 		"methods": {
 			"test_trim_valid": {
-				"line": 137
-			},
-			"test_blit_valid": {
-				"line": 174
-			},
-			"validateBlit": {
-				"line": 237
-			},
-			"test_init_valid": {
 				"line": 61
 			},
-			"validateAlloc": {
+			"test_blit_valid": {
+				"line": 73
+			},
+			"validateBlit": {
+				"line": 222
+			},
+			"test_init_valid": {
 				"line": 29
 			},
+			"validateAlloc": {
+				"line": 114
+			},
 			"validateTrim": {
-				"line": 150
+				"line": 190
 			},
 			"validateInit": {
-				"line": 93
-			},
-			"intVector": {
-				"line": 304
+				"line": 146
 			},
 			"test_alloc_valid": {
 				"line": 12

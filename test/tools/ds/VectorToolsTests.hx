@@ -27,38 +27,6 @@ using tools.ds.VectorTools;
 		Assert.isTrue(validateAlloc(srcItems, n)); // vec len is zero
 	}
 
-	inline function validateAlloc<T>(_srcItems:Array<T>, _n:Int) {
-		var valid = false;
-		final vecLen = _srcItems.length;
-		var vecInit = new Vector<T>(vecLen);
-		for (i in 0...vecLen)
-			vecInit[i] = _srcItems[i];
-		var vec = vecInit;
-		vec.alloc(_n);
-		if (_n > 0 && _n <= vecLen) {
-			for (i in 0..._n) {
-				valid = vec[i] == null;
-				if (valid)
-					continue;
-				else
-					break;
-			}
-			if (valid) {
-				if (_n != vecLen) {
-					for (i in _n - 1...vecLen - _n) {
-						valid = vec[i] == vecInit[i];
-						if (valid)
-							continue;
-						else
-							break;
-					}
-				}
-			}
-		} else
-			valid = vec == vecInit;
-		return valid;
-	}
-
 	public inline function test_init_valid() {
 		var srcItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 		var val = 0;
@@ -89,6 +57,91 @@ using tools.ds.VectorTools;
 		first = 2;
 		n = 6;
 		Assert.isTrue(validateInit(srcItems, val, first, n)); // n lt vecLen, first gt zero, lastPos lt vec lastPos (vecLen - 1)
+	}
+
+	public inline function test_trim_valid() {
+		var srcItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+		var n = 9;
+		Assert.isTrue(validateTrim(srcItems, n));
+		n = -1;
+		Assert.isTrue(validateTrim(srcItems, n)); // trim len lt zero
+		n = 20;
+		Assert.isTrue(validateTrim(srcItems, n)); // trim len gt vec len
+		n = 10;
+		Assert.isTrue(validateTrim(srcItems, n)); // trim len is vec len
+	}
+
+	public inline function test_blit_valid() {
+		var n = 10;
+		var srcItems = [10, 11, 22, 33, 44, 55, 66, 77, 88, 99];
+		var dstItems = [12, 13, 14, 25, 36, 47, 58, 69, 82, 93];
+		var srcPos = 0;
+		var dstPos = 0;
+		Assert.isTrue(validateBlit(srcItems, dstItems, srcPos, dstPos, n)); // n is dst len
+		n = 10;
+		srcItems = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
+		dstItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+		srcPos = 0;
+		dstPos = 10;
+		Assert.isTrue(validateBlit(srcItems, dstItems, srcPos, dstPos, n)); // lastPos (dstPos + n) lte dst len
+		n = 6;
+		srcItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+		dstItems = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
+		srcPos = 4;
+		dstPos = 2;
+		Assert.isTrue(validateBlit(srcItems, dstItems, srcPos, dstPos, n)); // n lte dstLen, lastPos (dstPos + n) lte dst len
+		srcItems = [1];
+		dstItems = [2];
+		srcPos = 1;
+		dstPos = 0;
+		n = 1;
+		Assert.isTrue(validateBlit(srcItems, dstItems, srcPos, dstPos, n)); // srcPos gt srcLen
+		srcPos = 0;
+		dstPos = 1;
+		Assert.isTrue(validateBlit(srcItems, dstItems, srcPos, dstPos, n)); // dstPos gt dstLen
+		dstPos = 0;
+		n = 0;
+		Assert.isTrue(validateBlit(srcItems, dstItems, srcPos, dstPos, n)); // n is zero
+		n = -1;
+		Assert.isTrue(validateBlit(srcItems, dstItems, srcPos, dstPos, n)); // n lt zero
+		n = 2;
+		dstItems = [2, 3];
+		Assert.isTrue(validateBlit(srcItems, dstItems, srcPos, dstPos, n)); // srcAmt (srcPos + n) gt srcLen
+		srcItems = [1, 2];
+		dstItems = [3];
+		Assert.isTrue(validateBlit(srcItems, dstItems, srcPos, dstPos, n)); // srcAmt (srcPos + n) gt dstLen
+	}
+
+	inline function validateAlloc<T>(_srcItems:Array<T>, _n:Int) {
+		var valid = false;
+		final vecLen = _srcItems.length;
+		var vecInit = new Vector<T>(vecLen);
+		for (i in 0...vecLen)
+			vecInit[i] = _srcItems[i];
+		var vec = vecInit;
+		vec.alloc(_n);
+		if (_n > 0 && _n <= vecLen) {
+			for (i in 0..._n) {
+				valid = vec[i] == null;
+				if (valid)
+					continue;
+				else
+					break;
+			}
+			if (valid) {
+				if (_n != vecLen) {
+					for (i in _n - 1...vecLen - _n) {
+						valid = vec[i] == vecInit[i];
+						if (valid)
+							continue;
+						else
+							break;
+					}
+				}
+			}
+		} else
+			valid = vec == vecInit;
+		return valid;
 	}
 
 	inline function validateInit<T>(_srcItems:Array<T>, _val:T, _first:Int, _n:Int) {
@@ -135,114 +188,52 @@ using tools.ds.VectorTools;
 		return valid;
 	}
 
-	public inline function test_trim_valid() {
-		var srcItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-		var n = 9;
-		var v = intVector(srcItems);
-		Assert.isTrue(validateTrim(v, n));
-		n = -1;
-		Assert.isTrue(validateTrim(v, n)); // trim len lt zero
-		n = 20;
-		Assert.isTrue(validateTrim(v, n)); // trim len gt vec len
-		n = 10;
-		Assert.isTrue(validateTrim(v, n)); // trim len is vec len
-	}
-
-	inline function validateTrim<T>(_vec:Vector<T>, _n:Int) {
-		final vecInit = _vec;
+	inline function validateTrim<T>(_srcItems:Array<T>, _n:Int) {
 		var valid = true;
-		_vec = _vec.trim(_n);
-		if (_n >= 0 && _n < vecInit.length) {
-			final vecLen = _vec.length;
-			if (_n > 0) {
-				var idx = -1;
-				for (i in 0...vecLen) {
-					idx++;
-					valid = _vec[i] == vecInit[idx];
-					if (valid)
-						continue;
-					else
-						break;
-				}
-				valid = valid ? _n == idx + 1 : false;
-			} else
-				valid = vecLen == 0;
+		final srcLen = _srcItems.length;
+		var vecInit = new Vector<T>(srcLen);
+		for (i in 0...srcLen)
+			vecInit[i] = _srcItems[i];
+		var vec = vecInit;
+		vec = vec.trim(_n);
+		if (_n >= 0 && _n < srcLen) {
+			var doValid = true;
+			while (doValid) {
+				final vecLen = vec.length;
+				if (_n > 0) {
+					var idx = -1;
+					for (i in 0...vecLen) {
+						idx++;
+						valid = vec[i] == vecInit[idx];
+						if (valid)
+							continue;
+						else
+							doValid = false;
+					}
+					valid = valid ? _n == idx + 1 : false;
+				} else
+					valid = vecLen == 0;
+				doValid = false;
+			}
 		} else
-			valid = _vec == vecInit;
+			valid = vec == vecInit;
 		return valid;
 	}
 
-	public inline function test_blit_valid() {
-		var n = 10;
-		var srcItems = [10, 11, 22, 33, 44, 55, 66, 77, 88, 99];
-		var dstItems = [12, 13, 14, 25, 36, 47, 58, 69, 82, 93];
-		var src = intVector(srcItems);
-		var dst = intVector(dstItems);
-		var srcPos = 0;
-		var dstPos = 0;
-		Assert.isTrue(validateBlit(src, dst, srcPos, dstPos, n));
-		n = 10;
-		srcItems = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
-		dstItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-		src = intVector(srcItems);
-		dst = intVector(dstItems);
-		srcPos = 0;
-		dstPos = 10;
-		Assert.isTrue(validateBlit(src, dst, srcPos, dstPos, n));
-		n = 6;
-		srcItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-		dstItems = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
-		src = intVector(srcItems);
-		dst = intVector(dstItems);
-		srcPos = 4;
-		dstPos = 2;
-		Assert.isTrue(validateBlit(src, dst, srcPos, dstPos, n));
-		Assert.raises(() -> { // srcPos gt srcLen
-			src = new Vector<Int>(1);
-			dst = new Vector<Int>(1);
-			dst = src.blit(2, dst, 0, 1);
-		});
-		Assert.raises(() -> { // dstPos gt dstLen
-			src = new Vector<Int>(1);
-			dst = new Vector<Int>(1);
-			dst = src.blit(0, dst, 2, 1);
-		});
-		srcItems = [1, 2, 3];
-		dstItems = [4, 5, 6];
-		n = 0;
-		srcPos = 0;
-		dstPos = 0;
-		src = intVector(srcItems);
-		dst = intVector(dstItems);
-		var dstBlitted = src.blit(srcPos, dst, dstPos, n); // dst,srcPos,dstPos,n); //0, dst, 0, 0);
-		Assert.isTrue(dstBlitted == dst); // n is 0
-		n = -1;
-		dstBlitted = src.blit(srcPos, dst, dstPos, n);
-		Assert.isTrue(dstBlitted == dst); // n is lte 0
-		srcPos = 2;
-		dstPos = 0;
-		n = 3;
-		dstBlitted = src.blit(srcPos, dst, dstPos, n);
-		Assert.isTrue(dstBlitted == dst); // srcPos + n (srcAmt) > srcLen
-		srcPos = 0;
-		dstPos = 2;
-		dstBlitted = src.blit(srcPos, dst, dstPos, n);
-		Assert.isTrue(dstBlitted == dst); // dstPos + n (dstAmt) > dstLen
-		Assert.raises(() -> { // srcPos gt srcLen, dstPos gt dstLen, n lte 0, srcPos + n (srcAmt) > srcLen, dstPos + n (dstAmt) > dstLen
-			src = new Vector<Int>(10);
-			dst = new Vector<Int>(10);
-			dst = src.blit(100, dst, 100, -1);
-		});
-	}
-
-	inline function validateBlit<T>(_src:Vector<T>, _dst:Vector<T>, _srcPos:Int, _dstPos:Int, _n:Int) {
-		final dstLen = _dst.length;
-		var valid = _srcPos < _src.length && _dstPos < dstLen;
-		if (valid) {
+	inline function validateBlit<T>(_srcItems:Array<T>, _dstItems:Array<T>, _srcPos:Int, _dstPos:Int, _n:Int) {
+		var valid = true;
+		final srcLen = _srcItems.length;
+		final dstLen = _dstItems.length;
+		var dstInit = new Vector<T>(dstLen);
+		var srcInit = new Vector<T>(srcLen);
+		for (i in 0...dstLen)
+			dstInit[i] = _dstItems[i];
+		for (i in 0...srcLen)
+			srcInit[i] = _srcItems[i];
+		final dst = srcInit.blit(_srcPos, dstInit, _dstPos, _n);
+		if (_srcPos < srcLen && _dstPos < dstLen) {
 			var doValid = true;
 			while (doValid) {
-				final dstInit = _dst;
-				final dst = _src.blit(_srcPos, _dst, _dstPos, _n);
 				final lenAtDstPosLast = _dstPos + _n;
 				if (_n > 0) {
 					if (_dstPos > 0) {
@@ -259,7 +250,7 @@ using tools.ds.VectorTools;
 					var idx = -1;
 					for (i in _srcPos..._srcPos + _n) {
 						idx++;
-						src[idx] = _src[i];
+						src[idx] = srcInit[i];
 					}
 					idx = -1;
 					var amt = 0;
@@ -296,17 +287,9 @@ using tools.ds.VectorTools;
 					}
 				}
 				doValid = false;
-			}
-			return valid;
+			};
 		} else
-			return false;
-	}
-
-	static inline function intVector(_intArr:Array<Int>) {
-		final intArrLen = _intArr.length;
-		var v = new Vector<Int>(intArrLen);
-		for (i in 0...intArrLen)
-			v[i] = _intArr[i];
-		return v;
+			valid = dst == dstInit;
+		return valid;
 	}
 }
