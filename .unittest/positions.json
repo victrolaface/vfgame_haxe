@@ -58,13 +58,13 @@
 				"line": 71
 			},
 			"test_blit_valid": {
-				"line": 93
+				"line": 128
 			},
 			"n": {
 				"line": 9
 			},
 			"validateBlit": {
-				"line": 164
+				"line": 199
 			},
 			"validateIter": {
 				"line": 58
@@ -72,11 +72,14 @@
 			"test_init_valid": {
 				"line": 37
 			},
+			"validateTrim": {
+				"line": 104
+			},
 			"len": {
 				"line": 10
 			},
 			"intVector": {
-				"line": 156
+				"line": 191
 			},
 			"idx": {
 				"line": 11

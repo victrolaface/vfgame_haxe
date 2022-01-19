@@ -45,18 +45,12 @@ import tools.debug.Precondition;
 	}
 
 	public static inline function trim<T>(_vec:Vector<T>, _len:Int) {
-		#if debug
-		Precondition.requires(_len >= 0, '"_len" greater than or equal to zero');
-		#end
-
-		len = _vec.length;
-		if (len > _len) {
-			var arr = _vec.toArray();
-			arr = arr.slice(0, _len);
-			len = arr.length;
-			var vec = new Vector<T>(len);
-			for (i in 0...len)
-				vec[i] = arr[i];
+		if (_len >= 0 && _len < _vec.length) {
+			var vec = new Vector<T>(_len);
+			if (_len > 0) {
+				for (i in 0..._len)
+					vec[i] = _vec[i];
+			}
 			return vec;
 		} else
 			return _vec;
@@ -67,6 +61,8 @@ import tools.debug.Precondition;
 		final srcPosLtLen = _srcPos < srcLen;
 		final dstLen = _dst.length;
 		final dstPosLtLen = _dstPos < dstLen;
+		final srcPosZero = _srcPos == 0;
+		final dstPosZero = _dstPos == 0;
 
 		#if debug
 		Precondition.requires(srcPosLtLen, '"_srcPos" at index $_srcPos less than length of $srcLen of vector "_src"');
@@ -74,49 +70,45 @@ import tools.debug.Precondition;
 		#end
 
 		var doBlit = srcPosLtLen && dstPosLtLen && _srcPos + _n < srcLen && _dstPos + _n < dstLen && _n > 0;
-		var dstBlitted = new Vector<T>(dstLen);
 
 		if (doBlit) {
-			final srcPosLast = posAt(_srcPos, _n);
-			final dstPosLast = posAt(_dstPos, _n);
-			var srcTrimmed = new Vector<T>(_n);
-			var idx = -1;
-			for (i in _srcPos...srcPosLast + 1) {
-				idx++;
-				srcTrimmed[idx] = _src[i];
-			}
-			final srcTrimmedLen = srcTrimmed.length;
-			final srcAmt = amt(_srcPos, srcPosLast);
-			final dstAmt = amt(_dstPos, dstPosLast);
-			if (isAmt(srcTrimmedLen, srcAmt, dstAmt, _n)) {
-				for (i in 0...dstLen)
-					dstBlitted[i] = _dst[i];
-				idx = -1;
-				for (i in _dstPos...dstPosLast + 1) {
-					idx++;
-					dstBlitted[i] = srcTrimmed[idx];
+			if (srcLen == dstLen) {
+				var i:Int;
+				var j:Int;
+				if (_srcPos < _dstPos) {
+					i = _srcPos + _n;
+					j = _dstPos + _n;
+					for (_ in 0..._n) {
+						i--;
+						j--;
+						_src[j] = _src[i];
+					}
+				} else if (_srcPos > _dstPos) {
+					i = _srcPos;
+					j = _dstPos;
+					for (_ in 0..._n) {
+						_src[j] = _src[i];
+						i++;
+						j++;
+					}
 				}
-				doBlit = isAmt(idx + 1, srcAmt, dstAmt, srcTrimmedLen, _n);
+			} else {
+				if (srcPosZero && dstPosZero) {
+					for (i in 0..._n)
+						_dst[i] = _src[i];
+				} else if (srcPosZero) {
+					for (i in 0..._n)
+						_dst[_dstPos + i] = _src[i];
+				} else if (dstPosZero) {
+					for (i in 0..._n)
+						_dst[i] = _src[_srcPos + i];
+				} else {
+					for (i in 0..._n)
+						_dst[_dstPos + i] = _src[_srcPos + i];
+				}
 			}
 		}
-		return doBlit ? dstBlitted : _dst;
-	}
-
-	static inline function posAt(_initPos:Int, _n:Int)
-		return _initPos + _n - 1;
-
-	static inline function isAmt(_len:Int, _amt1:Int, _amt2:Int, _amt3:Int, ?_amt4:Int) {
-		final notNull = _amt4 != null;
-		final lenIsAmt = _len == _amt1 && _len == _amt2 && _len == _amt3;
-		return notNull ? lenIsAmt && _len == _amt4 : lenIsAmt;
-	}
-
-	static inline function amt(_pos1:Int, _pos2:Int) {
-		final len = _pos2 + 1;
-		var a = 0;
-		for (_ in _pos1...len)
-			a++;
-		return a;
+		return _dst;
 	}
 
 	#if debug
@@ -134,8 +126,6 @@ import tools.debug.Precondition;
 	#end
 }
 /*
-
-
 	public static inline function swap<T>(_vec:Vector<T>, _a:Int, _b:Int) {
 		len = _vec.length;
 		dirty = _vec == null || 0 > _a || _a >= len || 0 > _b || _b >= len;
@@ -451,9 +441,5 @@ import tools.debug.Precondition;
 			}
 			i++;
 		}
-	}
-
-	static inline function onDirty()
-		dirty = dirty ? !dirty : false;
 	}
  */

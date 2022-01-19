@@ -70,25 +70,40 @@ using tools.ds.VectorTools;
 	}
 
 	public inline function test_trim_valid() {
-		var v = new Vector<Int>(10);
-		for (i in 0...v.length)
-			v[i] = i;
-		v = v.trim(9);
-		var isVal = false;
-		for (i in 0...v.length) {
-			isVal = v[i] == i;
-			if (isVal)
-				continue;
-			else
-				break;
-		}
-		Assert.isTrue(isVal && v.length == 9);
-		Assert.raises(() -> {
-			v = v.trim(-1); // trim len < 0
-		});
-		v = new Vector<Int>(1);
-		v = v.trim(8); // trim len < vec len
-		Assert.isTrue(v.length == 1);
+		var srcItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+		var n = 9;
+		var v = intVector(srcItems);
+		Assert.isTrue(validateTrim(v, n));
+		n = -1;
+		Assert.isTrue(validateTrim(v, n)); // trim len lt zero
+		n = 20;
+		Assert.isTrue(validateTrim(v, n)); // trim len gt vec len
+		n = 10;
+		Assert.isTrue(validateTrim(v, n)); // trim len is vec len
+	}
+
+	inline function validateTrim<T>(_vec:Vector<T>, _n:Int) {
+		final vecInit = _vec;
+		var valid = true;
+		_vec = _vec.trim(_n);
+		if (_n >= 0 && _n < vecInit.length) {
+			final vecLen = _vec.length;
+			if (_n > 0) {
+				var idx = -1;
+				for (i in 0...vecLen) {
+					idx++;
+					valid = _vec[i] == vecInit[idx];
+					if (valid)
+						continue;
+					else
+						break;
+				}
+				valid = valid ? _n == idx + 1 : false;
+			} else
+				valid = vecLen == 0;
+		} else
+			valid = _vec == vecInit;
+		return valid;
 	}
 
 	public inline function test_blit_valid() {
@@ -152,14 +167,6 @@ using tools.ds.VectorTools;
 			dst = new Vector<Int>(10);
 			dst = src.blit(100, dst, 100, -1);
 		});
-	}
-
-	static inline function intVector(_intArr:Array<Int>) {
-		final intArrLen = _intArr.length;
-		var v = new Vector<Int>(intArrLen);
-		for (i in 0...intArrLen)
-			v[i] = _intArr[i];
-		return v;
 	}
 
 	inline function validateBlit<T>(_src:Vector<T>, _dst:Vector<T>, _srcPos:Int, _dstPos:Int, _n:Int) {
@@ -227,5 +234,13 @@ using tools.ds.VectorTools;
 			return valid;
 		} else
 			return false;
+	}
+
+	static inline function intVector(_intArr:Array<Int>) {
+		final intArrLen = _intArr.length;
+		var v = new Vector<Int>(intArrLen);
+		for (i in 0...intArrLen)
+			v[i] = _intArr[i];
+		return v;
 	}
 }
