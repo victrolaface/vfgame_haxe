@@ -1,27 +1,27 @@
 {
 	"tools.ds.DynamicVectorToolsTests": {
 		"pos": {
-			"line": 11,
+			"line": 7,
 			"file": "test/tools/ds/DynamicVectorToolsTests.hx"
 		},
 		"methods": {
+			"validateSize": {
+				"line": 52
+			},
 			"maxSize": {
-				"line": 12
+				"line": 8
 			},
 			"test_size_valid": {
-				"line": 19
-			},
-			"len": {
 				"line": 14
 			},
 			"validateCaps": {
-				"line": 53
+				"line": 72
 			},
 			"test_caps_valid": {
-				"line": 36
+				"line": 28
 			},
 			"defaultCap": {
-				"line": 13
+				"line": 9
 			}
 		}
 	},
@@ -44,7 +44,7 @@
 				"line": 11
 			},
 			"test_alloc_valid": {
-				"line": 41
+				"line": 35
 			}
 		}
 	},

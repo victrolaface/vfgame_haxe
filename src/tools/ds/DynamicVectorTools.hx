@@ -9,54 +9,47 @@ using tools.ds.VectorTools;
 	static final DEFAULT_CAP = 64;
 	static final MAX_SIZE = 1048576;
 
-	static var idx:Int;
-
 	public static inline function size(?_size:Int) {
-		final sizeIsNull = _size == null;
-		final sizeGteZero = _size >= 0;
-		final sizeGtMaxSize = _size > MAX_SIZE;
-		final sizeInRange = sizeGteZero && !sizeGtMaxSize;
-
-		#if debug
-		if (_size != null)
-			Precondition.requires(sizeInRange, '"_size" must be greater than or equal to zero and less than or equal to $MAX_SIZE');
-		#end
-
-		return sizeIsNull ? MAX_SIZE : (sizeGtMaxSize ? MAX_SIZE : _size);
+		if (_size != null) {
+			if (_size < 0)
+				_size = 0;
+			else {
+				if (_size > MAX_SIZE)
+					_size = MAX_SIZE;
+			}
+		} else
+			_size = MAX_SIZE;
+		return _size;
 	}
 
-	public static inline function caps(_maxCap:Int) {
-		final maxCapGteZero = _maxCap >= 0;
-		final maxCapLteMaxSize = _maxCap <= MAX_SIZE;
-		final maxCapGtDefault = _maxCap > DEFAULT_CAP;
-
-		#if debug
-		Precondition.requires(maxCapGteZero, '"_maxCap" must be greater than or equal to zero');
-		Precondition.requires(maxCapLteMaxSize, '"_maxCap" must be less than or equal to $MAX_SIZE');
-		#end
-
-		if (maxCapGteZero) {
-			_maxCap = maxCapLteMaxSize ? _maxCap : MAX_SIZE;
-			var cArr = new Array<Int>();
-			idx = 0;
-			cArr[idx] = maxCapGtDefault ? DEFAULT_CAP : _maxCap;
-			if (maxCapGtDefault) {
-				var doAdd = true;
-				do {
-					var n = cArr[idx] * 2;
-					idx++;
-					var add = n < _maxCap;
-					cArr[idx] = add ? n : _maxCap;
-					doAdd = add;
-				} while (doAdd);
+	public static inline function caps(?_maxCap:Int) {
+		if (_maxCap != null) {
+			if (_maxCap < 0) {
+				_maxCap = 0;
+			} else {
+				if (_maxCap > MAX_SIZE)
+					_maxCap = MAX_SIZE;
 			}
-			final len = cArr.length;
-			var c = new Vector<Int>(len);
-			c.alloc(len);
-			for (i in 0...len)
-				c[i] = cArr[i];
-			return c;
 		} else
-			return new Vector<Int>(0);
+			_maxCap = MAX_SIZE;
+		var idx = 0;
+		var capsArr = new Array<Int>();
+		final maxCapGtDefault = _maxCap > DEFAULT_CAP;
+		capsArr[idx] = maxCapGtDefault ? DEFAULT_CAP : _maxCap;
+		if (maxCapGtDefault) {
+			var doAdd = true;
+			while (doAdd) {
+				var cap = capsArr[idx] * 2;
+				idx++;
+				var add = cap < _maxCap;
+				capsArr[idx] = add ? cap : _maxCap;
+				doAdd = add;
+			}
+		}
+		final capsLen = capsArr.length;
+		var caps = new Vector<Int>(capsLen);
+		for (i in 0...capsLen)
+			caps[i] = capsArr[i];
+		return caps;
 	}
 }

@@ -31,12 +31,6 @@ import tools.ds.DynamicVectorTools;
 		Assert.isTrue(sut.length == defaultCap);
 		sut = new DynamicVector(maxSize);
 		Assert.isTrue(sut.length == defaultCap);
-		Assert.raises(() -> {
-			sut = new DynamicVector<Int>(-1);
-		});
-		Assert.raises(() -> {
-			sut = new DynamicVector<Int>(maxSize + 1);
-		});
 	}
 
 	public inline function test_alloc_valid() {
