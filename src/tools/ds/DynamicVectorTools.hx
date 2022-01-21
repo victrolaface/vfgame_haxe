@@ -1,7 +1,6 @@
 package tools.ds;
 
 import haxe.ds.Vector;
-import tools.debug.Precondition;
 
 using tools.ds.VectorTools;
 

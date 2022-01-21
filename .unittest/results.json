@@ -4,28 +4,19 @@
 		{
 			"name": "tools.ds.DynamicVectorTests",
 			"pos": {
-				"line": 8,
+				"line": 6,
 				"file": "test/tools/ds/DynamicVectorTests.hx"
 			},
 			"id": "tools.ds.DynamicVectorTests",
 			"methods": [
 				{
-					"name": "test_alloc_valid",
-					"line": 35,
-					"executionTime": 0,
-					"errorLine": null,
-					"state": "success",
-					"message": null,
-					"timestamp": 1642652383.6146719
-				},
-				{
 					"name": "test_new_valid",
-					"line": 16,
+					"line": 14,
 					"executionTime": 0,
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1642652383.6146719
+					"timestamp": 1642728059.5648575
 				}
 			]
 		},
@@ -44,7 +35,7 @@
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1642652383.6146719
+					"timestamp": 1642728059.5648575
 				},
 				{
 					"name": "test_size_valid",
@@ -53,7 +44,7 @@
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1642652383.6146719
+					"timestamp": 1642728059.5648575
 				}
 			]
 		},
@@ -72,7 +63,7 @@
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1642652383.6146719
+					"timestamp": 1642728059.5648575
 				},
 				{
 					"name": "test_blit_valid",
@@ -81,7 +72,7 @@
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1642652383.6146719
+					"timestamp": 1642728059.5648575
 				},
 				{
 					"name": "test_init_valid",
@@ -90,7 +81,7 @@
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1642652383.6146719
+					"timestamp": 1642728059.5648575
 				},
 				{
 					"name": "test_trim_valid",
@@ -99,7 +90,7 @@
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1642652383.6146719
+					"timestamp": 1642728059.5648575
 				}
 			]
 		}

@@ -27,24 +27,24 @@
 	},
 	"tools.ds.DynamicVectorTests": {
 		"pos": {
-			"line": 8,
+			"line": 6,
 			"file": "test/tools/ds/DynamicVectorTests.hx"
 		},
 		"methods": {
 			"maxSize": {
-				"line": 9
+				"line": 7
 			},
 			"test_new_valid": {
-				"line": 16
+				"line": 14
+			},
+			"validateNew": {
+				"line": 38
 			},
 			"defaultCap": {
-				"line": 10
+				"line": 8
 			},
 			"sut": {
-				"line": 11
-			},
-			"test_alloc_valid": {
-				"line": 35
+				"line": 9
 			}
 		}
 	},
