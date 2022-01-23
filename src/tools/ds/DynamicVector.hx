@@ -9,36 +9,47 @@ using tools.ds.VectorTools;
 	var size:Int = 0;
 	var count:Int = 0;
 	var capIdx:Int = 0;
-	var mState:State = None;
+	var state:State = None;
 	var caps:Vector<Int>;
 	var storage:Vector<T>;
-
 	var cap(get, never):Int;
 	var maxCap(get, never):Int;
 	var hasNextCap(get, never):Bool;
 
 	public var length(get, never):Int;
-	#if debug
-	public var toString(get, never):String;
-	public var state(get, never):String;
-	#end
 
 	public inline function new(?_size:Int) {
 		size = DynamicVectorTools.size(_size);
 		caps = DynamicVectorTools.caps(maxCap);
 		storage = new Vector<T>(cap);
 		storage.alloc(cap);
-		mState = Alloc;
-
-		#if debug
-		final capsLen = caps.length;
-		final first = caps[0];
-		final capIsFirst = cap == first;
-		final hasCap = capsLen == 1 && size == first && !hasNextCap;
-		final hasCaps = size == caps[capsLen - 1] && hasNextCap;
-		mState = capIsFirst && (hasCap || hasCaps) ? Alloc : Error;
-		#end
+		state = Alloc;
 	}
+
+	public inline function alloc(?_n:Int) {
+		if (_n != null && _n >= 0) {
+			final doAlloc = canAlloc(_n);
+			if (doAlloc) {
+				if (lteCap(_n))
+					storage.alloc(_n);
+				else if (hasCapGte(_n)) {
+					final idxGteN = capIdxGte(_n);
+					if (idxGteN != null && idxGteN > capIdx) {
+						capIdx = idxGteN;
+						storage = new Vector<T>(cap);
+						storage.alloc(_n);
+					}
+				}
+			}
+			state = doAlloc && state != Alloc ? Alloc : state;
+		}
+	}
+
+	public inline function canAlloc(?_n:Int)
+		return _n != null && _n >= 0 ? (_n <= cap ? true : (hasCapGte(_n) ? true : false)) : false;
+
+	inline function lteCap(_n:Int)
+		return _n <= cap;
 
 	inline function get_maxCap()
 		return size;
@@ -52,57 +63,28 @@ using tools.ds.VectorTools;
 	inline function get_hasNextCap()
 		return capIdx + 1 < caps.length;
 
-	/*inline function hasCapGte(_len:Int) {
+	inline function hasCapGte(_n:Int) {
 		var has = false;
 		for (i in capIdx...caps.length) {
-			if (caps[i] >= _len)
-				has = true;
+			has = _n <= caps[i];
+			if (has)
+				break;
 			else
 				continue;
 		}
 		return has;
-	}*/
-	/*inline function capIdxGte(_len:Int) {
-		var idxGteLen:Null<Int> = null;
+	}
+
+	inline function capIdxGte(_n:Int) {
+		var idx:Null<Int> = null;
 		for (i in capIdx...caps.length) {
-			if (caps[i] >= _len) {
-				idxGteLen = i;
+			if (_n <= caps[i]) {
+				idx = i;
 				break;
 			} else
 				continue;
 		}
-		return idxGteLen != null ? idxGteLen : null;
-	}*/
-	public inline function alloc(?_len:Int) {
-		/*
-			final canAlloc = _len >= 0 && _len <= maxCap;
-			final canAllocAtNewCap = hasCapGte(_len);
-			#if debug
-			Precondition.requires(canAlloc, '"_len" greater than or equal to zero and less than or equal to maximum capacity of $maxCap');
-			#end
-
-			if (canAlloc) {
-				if (_len <= cap)
-					storage.alloc(_len);
-				else {
-					if (canAllocAtNewCap) {
-						final idxGteLen = capIdxGte(_len);
-						capIdx = idxGteLen == null ? capIdx : idxGteLen;
-						final capAtCapIdxIsGteLen = capIdx == idxGteLen;
-
-						#if debug
-						Precondition.requires(capAtCapIdxIsGteLen, '"_len" is less than or equal to capacity of $cap at index $capIdx');
-						#end
-
-						if (capAtCapIdxIsGteLen) {
-							storage = new Vector<T>(cap);
-							storage.alloc(_len);
-						}
-					}
-				}
-				mState = Alloc;
-			}
-		 */
+		return idx;
 	}
 
 	public inline function init(_val:T, _first:Int = 0, _n:Int = 0) {
@@ -156,18 +138,6 @@ using tools.ds.VectorTools;
 	public inline function get(_idx:Int) {}
 
 	public inline function set(_idx:Int, _val:T) {}
-
-	#if debug
-	public inline function get_toString() {
-		final c = caps.toArray().toString();
-		final s = storage.toArray().toString();
-		final r = 'capIdx: $capIdx \n caps: $c \n length: $cap \n storage: $s';
-		return r;
-	}
-
-	public inline function get_state()
-		return mState.getName();
-	#end
 }
 
 enum State {
@@ -177,6 +147,7 @@ enum State {
 	Set;
 	Error;
 }
+
 /*
 	public inline function get(_idx:Int) {
 		final idxLteCap = idxLteCap(_idx);

@@ -36,9 +36,9 @@ import tools.ds.DynamicVectorTools;
 		Assert.isTrue(validateCaps(maxCap)); // maxCap gt zero lt default
 		maxCap = defaultCap - 1;
 		Assert.isTrue(validateCaps(maxCap)); // maxCap gt zero lt default
-		maxCap++; // =defaultCap;
+		maxCap++;
 		Assert.isTrue(validateCaps(maxCap)); // maxCap is default
-		maxCap++; // =defaultCap+1;
+		maxCap++;
 		Assert.isTrue(validateCaps(maxCap)); // maxCap gt default
 		maxCap = 999;
 		Assert.isTrue(validateCaps(maxCap)); // maxCap lt maxSize

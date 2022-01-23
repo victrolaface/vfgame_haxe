@@ -130,7 +130,7 @@ using tools.ds.VectorTools;
 			}
 			if (valid) {
 				if (_n != vecLen) {
-					for (i in _n - 1...vecLen - _n) {
+					for (i in _n...vecLen) {
 						valid = vec[i] == vecInit[i];
 						if (valid)
 							continue;
