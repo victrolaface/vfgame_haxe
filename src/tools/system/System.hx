@@ -5,28 +5,36 @@ import sys.io.Process;
 import haxe.io.BytesOutput;
 import haxe.io.Eof;
 import tools.debug.Precondition;
+import tools.debug.Log;
+import haxe.io.Path in HaxePath;
 
 @:structInit class System {
+	static var strEmpty = '';
 	static var cores:Int = 0;
 	static var platform:HostPlatform = null;
 	static var dryRun:Bool = false;
 	public static var hostPlatform(get, never):HostPlatform;
 	public static var processorCores(get, never):Int;
 
+	static inline function isNull<T>(_val:T)
+		return _val == null;
+
+	static inline function isEmpty(_str:String)
+		return _str == strEmpty;
+
 	static inline function get_hostPlatform():HostPlatform {
 		var p:HostPlatform;
-		if (platform != null)
-			p = platform;
-		else {
+		if (isNull(platform)) {
 			final flag = 'i';
-			if (matchedSystem("window", '$flag'))
+			if (matchedSystem('window', '$flag'))
 				p = WINDOWS;
-			else if (matchedSystem("linux", '$flag'))
+			else if (matchedSystem('linux', '$flag'))
 				p = LINUX;
-			else if (matchedSystem("mac", '$flag'))
+			else if (matchedSystem('mac', '$flag'))
 				p = MAC;
 			platform = p;
-		}
+		} else
+			p = platform;
 		return p;
 	}
 
@@ -37,31 +45,28 @@ import tools.debug.Precondition;
 		final dryRunCached = dryRun;
 		dryRun = false;
 		if (cores < 1) {
-			var res:String;
+			var n:String = null;
 			switch (hostPlatform) {
 				case WINDOWS:
 					final out = Sys.getEnv("NUMBER_OF_PROCESSORS");
-					res = out != null ? out : null;
+					n = out != null ? out : null;
 				case LINUX:
-					res = runProcess("", "nproc", [], true, true, true);
-					if (res == null) {
-						final out = runProcess("", "cat", ["/proc/cpuinfo"], true, true, true);
-						res = out != null ? Std.string((out.split("processor")).length - 1) : null;
+					n = runProcess(strEmpty, "nproc", [], true, true, true);
+					if (isNull(n)) {
+						final out = runProcess(strEmpty, "cat", ["/proc/cpuinfo"], true, true, true);
+						n = out != null ? Std.string((out.split("processor")).length - 1) : null;
 					}
 				case MAC:
-					var n = ~/Total Number of Cores: (\d+)/;
-					res = n.match(runProcess("", "/usr/sbin/system_profiler", ["-detailLevel", "full", "SPHardwareDataType"])) ? n.matched(1) : null;
+					final msg = ~/Total Number of Cores: (\d+)/;
+					n = msg.match(runProcess(strEmpty, "/usr/sbin/system_profiler", ["-detailLevel", "full", "SPHardwareDataType"])) ? msg.matched(1) : null;
 				case _:
-					res = null;
+					n = null;
 			}
-			cores = res == null || Std.parseInt(res) < 1 ? 1 : Std.parseInt(res);
+			cores = isNull(n) || Std.parseInt(n) < 1 ? 1 : Std.parseInt(n);
 		}
 		dryRun = dryRunCached;
 		return cores;
 	}
-
-	static inline function pathExists(_path:String, _init:Bool)
-		return FileSystem.exists(_init ? new Path(_path).dir : _path);
 
 	static inline function runProcess(_path:String, _cmd:String, _args:Array<String>, _wait:Bool = true, _safe:Bool = true, _ignoreErr:Bool = false,
 			_prnt:Bool = false, _retErr:Bool = false) {
@@ -78,105 +83,80 @@ import tools.debug.Precondition;
 		var run = true;
 		#if debug
 		if (_safe) {
-			run = _path != null && _path != '' && pathExists(_path, true) && pathExists(_path, false);
+			run = !isNull(_path) && !isEmpty(_path) && pathExists(_path, true) && pathExists(_path, false);
 			Precondition.requires(run, 'path "$_path" exists');
 		#end
 		}
-		return run ? doRunProcess(_path, _cmd, _args, _wait, _safe, _ignoreErr, _retErr) : null;
+		return run ? process(_path, _cmd, _args, _wait, _safe, _ignoreErr, _retErr) : null;
 	}
 
-	static inline function doRunProcess(_path:String, _cmd:String, _args:Array<String>, _wait:Bool, _safe:Bool, _ignore:Bool, _retErr:Bool) {
-		var initPath='';
-        //if(_path != null && path !=''){}
-         //   #if debug
-            
-         //   #end
-        /*
-		var oldPath:String = "";
+	static inline function pathExists(_path:String, _init:Bool)
+		return FileSystem.exists(_init ? new HaxePath(_path).dir : _path);
 
-		if (path != null && path != "") {
-			// Log.info("", " - \x1b[1mChanging directory:\x1b[0m " + path + "");
-
+	static inline function process(_path:String, _cmd:String, _args:Array<String>, _wait:Bool, _safe:Bool, _ignore:Bool, _retErr:Bool) {
+		var initPath = strEmpty;
+		if (!isNull(_path) && !isEmpty(_path)) {
+			#if debug
+			Log.info(strEmpty, ' - \x1b[1mChanging directory:\x1b[0m $_path ');
+			#end
 			if (!dryRun) {
-				oldPath = Sys.getCwd();
-				Sys.setCwd(path);
+				initPath = Sys.getCwd();
+				Sys.setCwd(_path);
 			}
 		}
-
-		var argString = "";
-
-		for (arg in args) {
-			if (arg.indexOf(" ") > -1) {
-				argString += " \"" + arg + "\"";
-			} else {
-				argString += " " + arg;
-			}
+		var args = strEmpty;
+		for (a in _args) {
+			if (a.indexOf(' ') > -1)
+				args += ' \"$a"\"';
+			else
+				args += ' $a';
 		}
-
-		// Log.info("", " - \x1b[1mRunning process:\x1b[0m " + command + argString);
-
-		var output = "";
-		var result = 0;
-
+		#if debug
+		Log.info(strEmpty, ' - \x1b[1mRunning process:\x1b[0m $_cmd $args');
+		#end
+		var out = strEmpty;
+		var res = 0;
 		if (!dryRun) {
-			var process = new Process(command, args);
-			var buffer = new BytesOutput();
-
-			if (waitForOutput) {
-				var waiting = true;
-
-				while (waiting) {
+			var p:Process;
+			if (!isNull(_args) && _args.length > 0)
+				p = new Process(_cmd, _args);
+			else
+				p = new Process(_cmd);
+			if (_wait) {
+				var buff = new BytesOutput();
+				var doWait = _wait;
+				while (doWait) {
 					try {
-						var current = process.stdout.readAll(1024);
-						buffer.write(current);
-
-						if (current.length == 0) {
-							waiting = false;
-						}
-					} catch (e:Eof) {
-						waiting = false;
-					}
+						var cur = p.stdout.readAll(1024);
+						buff.write(cur);
+						if (cur.length == 0)
+							doWait = false;
+					} catch (e:Eof)
+						doWait = false;
 				}
-
-				result = process.exitCode();
-
-				output = buffer.getBytes().toString();
-
-				if (output == "") {
-					var error = process.stderr.readAll().toString();
-					process.close();
-
-					if (result != 0 || error != "") {
-						if (ignoreErrors) {
-							output = error;
-						} else if (!safeExecute) {
-							throw error;
-						} else {
-							// Log.error(error);
-						}
-
-						if (returnErrorValue) {
-							return output;
-						} else {
-							return null;
-						}
+				res = p.exitCode();
+				out = buff.getBytes().toString();
+				if (isEmpty(out)) {
+					var err = p.stderr.readAll().toString();
+					p.close();
+					if (res != 0 || !isEmpty(err)) {
+						if (_ignore)
+							out = err;
+						#if debug
+						else if (!_safe)
+							throw err;
+						else
+							Log.error(err);
+						#end
+						if (!_retErr)
+							out = null;
 					}
-
-					/*if (error != "") {
-
-					Log.error (error);
-
-	}*/
-
-		// }
-		// else {
-		//	process.close();
-		//	}
-		// } if (oldPath != "") {
-		//	Sys.setCwd(oldPath);
-		// }
-		// } return output;
-		//*/
-		return '';
+				} else
+					p.close();
+			}
+			if (!isEmpty(initPath))
+				Sys.setCwd(initPath);
+		}
+		return out;
 	}
 }

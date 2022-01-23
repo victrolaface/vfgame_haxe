@@ -7,22 +7,31 @@ package tools.ds;
 // namespace Permutations {
 import tools.math.Factorial;
 import haxe.ds.Vector;
+import tools.debug.Precondition;
 
+// import tools.debug.Log;
 // import haxe.macro;
 using haxe.Int64;
 
 @:structInit class PermutationOuelletHuttunen<T> {
 	var first:Null<Int64> = 0;
-	var last:Null<Int64>; // =0;
+	var last:Null<Int64>;
 	var sorted:Vector<Int>;
+	final strEmpty = '';
 
 	public inline function perm(_sorted:Vector<Int>, _first:Int = -1, _last:Int = -1) {
 		first = Int64.ofInt(_first) == -1 ? 0 : null;
 		last = Int64.ofInt(_last) == -1 ? Factorial.factor(_sorted.length) : null;
-		sorted = first < last ? _sorted : null;
+		final firstLtLast = first < last;
+		#if debug
+		Precondition.requires(firstLtLast, 'index of "first" of value $first less than index of "last" of value $last');
+		#end
+		sorted = firstLtLast ? _sorted : null;
 	}
 
 	public inline function forEach() {}
+
+	public static inline function forEachMT(){}
 }
 /*public class PermutationMixOuelletSaniSinghHuttunen {
 		public
