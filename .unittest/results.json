@@ -11,21 +11,21 @@
 			"methods": [
 				{
 					"name": "test_alloc_valid",
-					"line": 39,
+					"line": 62,
 					"executionTime": 0,
 					"errorLine": null,
-					"state": "success",
-					"message": null,
-					"timestamp": 1642798759.6559598
+					"state": "failure",
+					"message": "no assertions",
+					"timestamp": 1642994332.1448607
 				},
 				{
 					"name": "test_new_valid",
-					"line": 15,
+					"line": 36,
 					"executionTime": 0,
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1642798759.6559598
+					"timestamp": 1642994332.1448607
 				}
 			]
 		},
@@ -44,7 +44,7 @@
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1642798759.6559598
+					"timestamp": 1642994332.1448607
 				},
 				{
 					"name": "test_size_valid",
@@ -53,7 +53,7 @@
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1642798759.6559598
+					"timestamp": 1642994332.1448607
 				}
 			]
 		},
@@ -72,7 +72,7 @@
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1642798759.6559598
+					"timestamp": 1642994332.1448607
 				},
 				{
 					"name": "test_blit_valid",
@@ -81,7 +81,7 @@
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1642798759.6559598
+					"timestamp": 1642994332.1448607
 				},
 				{
 					"name": "test_init_valid",
@@ -90,7 +90,7 @@
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1642798759.6559598
+					"timestamp": 1642994332.1448607
 				},
 				{
 					"name": "test_trim_valid",
@@ -99,7 +99,7 @@
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1642798759.6559598
+					"timestamp": 1642994332.1448607
 				}
 			]
 		}

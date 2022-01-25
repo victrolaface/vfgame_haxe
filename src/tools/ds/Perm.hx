@@ -31,7 +31,7 @@ using haxe.Int64;
 
 	public inline function forEach() {}
 
-	public static inline function forEachMT(){}
+	public static inline function forEachMT() {}
 }
 /*public class PermutationMixOuelletSaniSinghHuttunen {
 		public
