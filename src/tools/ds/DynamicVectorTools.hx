@@ -8,15 +8,10 @@ using tools.ds.VectorTools;
 	static final DEFAULT_CAP = 64;
 	static final MAX_SIZE = 1048576;
 
-	public static inline function size(?_size:Int) {
-		if (_size != null) {
-			if (_size < 0)
-				_size = 0;
-			else {
-				if (_size > MAX_SIZE)
-					_size = MAX_SIZE;
-			}
-		} else
+	public static inline function size(?_size:Int = 0) {
+		if (_size == null || _size < 0)
+			_size = 0;
+		else if (_size > MAX_SIZE)
 			_size = MAX_SIZE;
 		return _size;
 	}

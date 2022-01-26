@@ -18,7 +18,7 @@ using tools.ds.VectorTools;
 
 	public var length(get, never):Int;
 
-	public inline function new(?_size:Int) {
+	public inline function new(?_size:Int = 0) {
 		size = DynamicVectorTools.size(_size);
 		caps = DynamicVectorTools.caps(maxCap);
 		storage = new Vector<T>(cap);
@@ -147,7 +147,6 @@ enum State {
 	Set;
 	Error;
 }
-
 /*
 	public inline function get(_idx:Int) {
 		final idxLteCap = idxLteCap(_idx);

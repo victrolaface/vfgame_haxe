@@ -27,78 +27,63 @@
 	},
 	"tools.ds.DynamicVectorTests": {
 		"pos": {
-			"line": 7,
+			"line": 9,
 			"file": "test/tools/ds/DynamicVectorTests.hx"
 		},
 		"methods": {
-			"initConditionalSrcItems": {
-				"line": 333
+			"get_sizes": {
+				"line": 45
 			},
 			"valid": {
-				"line": 28
+				"line": 23
 			},
 			"isZero": {
-				"line": 12
-			},
-			"ltZero": {
-				"line": 11
-			},
-			"ltMaxSize": {
-				"line": 17
-			},
-			"conditionalVals": {
-				"line": 22
-			},
-			"gtDefaultCap": {
-				"line": 16
-			},
-			"maxSize": {
-				"line": 8
-			},
-			"test_new_valid": {
-				"line": 36
-			},
-			"validateAlloc": {
-				"line": 340
-			},
-			"isMaxSize": {
-				"line": 18
-			},
-			"genSrcItems": {
-				"line": 292
-			},
-			"validateNew": {
-				"line": 308
-			},
-			"isNull": {
-				"line": 10
-			},
-			"ltDefaultCap": {
 				"line": 14
 			},
-			"conditionalSrcItems": {
-				"line": 25
-			},
-			"initConditional": {
-				"line": 326
-			},
-			"defaultCap": {
-				"line": 9
-			},
-			"sut": {
-				"line": 21
-			},
-			"gtMaxSize": {
-				"line": 19
-			},
-			"isDefaultCap": {
-				"line": 15
-			},
-			"gtZero": {
+			"ltZero": {
 				"line": 13
 			},
-			"test_alloc_valid": {
-				"line": 62
+			"ltMaxSize": {
+				"line": 19
+			},
+			"gtDefaultCap": {
+				"line": 18
+			},
+			"nVals": {
+				"line": 24
+			},
+			"maxSize": {
+				"line": 10
+			},
+			"isMaxSize": {
+				"line": 20
+			},
+			"isNull": {
+				"line": 12
+			},
+			"sizes": {
+				"line": 25
+			},
+			"get_nVals": {
+				"line": 30
+			},
+			"ltDefaultCap": {
+				"line": 16
+			},
+			"defaultCap": {
+				"line": 11
+			},
+			"sut": {
+				"line": 22
+			},
+			"gtMaxSize": {
+				"line": 21
+			},
+			"isDefaultCap": {
+				"line": 17
+			},
+			"gtZero": {
+				"line": 15
 			}
 		}
 	},
