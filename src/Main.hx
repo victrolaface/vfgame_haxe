@@ -1,3 +1,3 @@
-@:structInit class Main {
+class Main {
 	public static function main() {}
 }

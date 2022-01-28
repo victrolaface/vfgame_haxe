@@ -1,6 +1,6 @@
 package tools.ds;
 
-@:structInit class CartesianProductIterator {
+class CartesianProductIterator {
 	var sets:Array<Array<Dynamic>>;
 	var curIndexes:Array<Int>;
 

@@ -1,6 +1,6 @@
 package tools.ecs;
 
-abstract Entity(Null<Int>) {
+abstract Entity(Int) {
 	public static final none = new Entity(-1);
 
 	public var id(get, set):Int;

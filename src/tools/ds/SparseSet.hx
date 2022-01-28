@@ -1,6 +1,6 @@
 package tools.ds;
 
-@:structInit class SparseSet {
+class SparseSet {
 	var sparse:Array<Int> = []; // Vector<Int>;
 	var dense:Array<Int> = []; // Vector<Int>;
 	var count:Int;

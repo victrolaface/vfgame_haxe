@@ -5,7 +5,7 @@ import utest.Assert;
 import utest.Test;
 import tools.ecs.core.EntityManager;
 
-@:structInit class EntityManagerTests extends Test {
+class EntityManagerTests extends Test {
 	static var mgr:EntityManager;
 
 	public inline function new()

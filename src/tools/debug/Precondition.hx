@@ -5,7 +5,7 @@ import haxe.Exception;
 
 using StringTools;
 
-@:structInit class Precondition {
+class Precondition {
 	static final CONDITION = "#condition";
 	static final MESSAGE = '$CONDITION is false';
 

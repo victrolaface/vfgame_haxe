@@ -5,7 +5,7 @@ import haxe.io.Bytes;
 import tools.system.System;
 import sys.io.Process;
 
-@:structInit class Log {
+class Log {
 	static final STR_EMPTY = '';
 	static final PRE_MSG = '\x1b[3';
 	static final MSG = ':\x1b[0m\x1b[1m';

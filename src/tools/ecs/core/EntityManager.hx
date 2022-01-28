@@ -4,7 +4,7 @@ package tools.ecs.core;
 import tools.debug.Precondition;
 #end
 
-@:structInit class EntityManager {
+class EntityManager {
 	static final ID_MASK = 0xfffff;
 	static final ID_BITS_AMOUNT = 20;
 	static final VERSION_MASK = 0xfff << ID_BITS_AMOUNT;

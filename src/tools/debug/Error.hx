@@ -3,7 +3,7 @@ package tools.debug;
 import tools.debug.UVErrorType;
 import haxe.PosInfos;
 
-@:structInit class Error {
+class Error {
 	var type:ErrorType;
 	var posInfos:PosInfos;
 	var message(get, never):String;

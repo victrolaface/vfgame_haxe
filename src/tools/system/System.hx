@@ -8,7 +8,7 @@ import tools.debug.Precondition;
 import tools.debug.Log;
 import haxe.io.Path in HaxePath;
 
-@:structInit class System {
+class System {
 	static final STR_EMPTY = "";
 	static final ZERO_STR = "0";
 	static var cores:Int = 0;
