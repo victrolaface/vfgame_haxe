@@ -10,31 +10,13 @@
 			"id": "tools.ecs.core.EntityManagerTests",
 			"methods": [
 				{
-					"name": "test_create_is_valid",
-					"line": 45,
+					"name": "testNewIsValid",
+					"line": 13,
 					"executionTime": null,
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1643404401.9541936
-				},
-				{
-					"name": "test_new_is_valid",
-					"line": 39,
-					"executionTime": null,
-					"errorLine": null,
-					"state": "success",
-					"message": null,
-					"timestamp": 1643404401.9541936
-				},
-				{
-					"name": "test_update_is_valid",
-					"line": 42,
-					"executionTime": null,
-					"errorLine": null,
-					"state": "success",
-					"message": null,
-					"timestamp": 1643404401.9661856
+					"timestamp": 1643408571.3168352
 				}
 			]
 		}

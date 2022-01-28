@@ -104,7 +104,7 @@ import tools.debug.Precondition;
 		onUpdate();
 	}
 
-	public inline function new(_size:Int = 0) {
+	public inline function new(_size:Int = 4096) {
 		cap = _size < COUNT_MIN ? COUNT_MIN : _size > COUNT_MAX ? COUNT_MAX : _size;
 		for (i in 1...cap + 1)
 			storage[i] = id(i, 0);

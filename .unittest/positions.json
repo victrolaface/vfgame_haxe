@@ -5,85 +5,13 @@
 			"file": "test/tools/ecs/core/EntityManagerTests.hx"
 		},
 		"methods": {
-			"valid": {
-				"line": 9
-			},
-			"validOnUpdateRaises": {
-				"line": 74
-			},
-			"test_update_is_valid": {
-				"line": 42
-			},
-			"LT_MAX": {
-				"line": 17
-			},
-			"SIZES": {
-				"line": 19
-			},
-			"validateUpdate": {
-				"line": 81
-			},
-			"validOnCreateRaises": {
-				"line": 67
-			},
-			"MAX": {
-				"line": 16
-			},
-			"LT_ZERO": {
-				"line": 11
-			},
-			"test_new_is_valid": {
-				"line": 39
-			},
-			"delete": {
-				"line": 24
-			},
-			"get_createLen": {
-				"line": 33
-			},
-			"sizesLen": {
-				"line": 22
-			},
-			"get_sizesLen": {
-				"line": 30
-			},
-			"GT_ZERO": {
-				"line": 12
-			},
-			"validateNew": {
-				"line": 48
-			},
-			"ZERO": {
-				"line": 10
-			},
-			"validateCreate": {
-				"line": 148
-			},
-			"GT_MIN": {
-				"line": 15
-			},
-			"LT_MIN": {
-				"line": 14
-			},
-			"sut": {
+			"mgr": {
 				"line": 8
 			},
-			"test_create_is_valid": {
-				"line": 45
+			"newMgrLen": {
+				"line": 25
 			},
-			"CREATE": {
-				"line": 20
-			},
-			"get_delete": {
-				"line": 26
-			},
-			"GT_MAX": {
-				"line": 18
-			},
-			"createLen": {
-				"line": 23
-			},
-			"MIN": {
+			"testNewIsValid": {
 				"line": 13
 			}
 		}
