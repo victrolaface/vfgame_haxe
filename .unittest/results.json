@@ -2,76 +2,39 @@
 	"name": "root",
 	"classes": [
 		{
-			"name": "tools.ds.DynamicVectorToolsTests",
+			"name": "tools.ecs.core.EntityManagerTests",
 			"pos": {
 				"line": 7,
-				"file": "test/tools/ds/DynamicVectorToolsTests.hx"
+				"file": "test/tools/ecs/core/EntityManagerTests.hx"
 			},
-			"id": "tools.ds.DynamicVectorToolsTests",
+			"id": "tools.ecs.core.EntityManagerTests",
 			"methods": [
 				{
-					"name": "test_size_valid",
-					"line": 14,
-					"executionTime": 0,
-					"errorLine": 15,
-					"state": "failure",
-					"message": "expected true",
-					"timestamp": 1643170605.2752047
+					"name": "test_create_is_valid",
+					"line": 45,
+					"executionTime": null,
+					"errorLine": null,
+					"state": "success",
+					"message": null,
+					"timestamp": 1643404401.9541936
 				},
 				{
-					"name": "test_caps_valid",
-					"line": 28,
-					"executionTime": 0,
+					"name": "test_new_is_valid",
+					"line": 39,
+					"executionTime": null,
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1643170605.2752047
-				}
-			]
-		},
-		{
-			"name": "tools.ds.VectorToolsTests",
-			"pos": {
-				"line": 8,
-				"file": "test/tools/ds/VectorToolsTests.hx"
-			},
-			"id": "tools.ds.VectorToolsTests",
-			"methods": [
-				{
-					"name": "test_alloc_valid",
-					"line": 12,
-					"executionTime": 0,
-					"errorLine": null,
-					"state": "success",
-					"message": null,
-					"timestamp": 1643170605.2752047
+					"timestamp": 1643404401.9541936
 				},
 				{
-					"name": "test_blit_valid",
-					"line": 73,
-					"executionTime": 0,
+					"name": "test_update_is_valid",
+					"line": 42,
+					"executionTime": null,
 					"errorLine": null,
 					"state": "success",
 					"message": null,
-					"timestamp": 1643170605.2752047
-				},
-				{
-					"name": "test_init_valid",
-					"line": 29,
-					"executionTime": 0,
-					"errorLine": null,
-					"state": "success",
-					"message": null,
-					"timestamp": 1643170605.2752047
-				},
-				{
-					"name": "test_trim_valid",
-					"line": 61,
-					"executionTime": 0,
-					"errorLine": null,
-					"state": "success",
-					"message": null,
-					"timestamp": 1643170605.2752047
+					"timestamp": 1643404401.9661856
 				}
 			]
 		}

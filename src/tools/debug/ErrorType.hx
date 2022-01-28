@@ -1,5 +1,5 @@
 package tools.debug;
 
 enum ErrorType {
-	UVError(errno:UVErrorType);
+	UVError(_errType:UVErrorType);
 }

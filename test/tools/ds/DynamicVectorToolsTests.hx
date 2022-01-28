@@ -1,11 +1,12 @@
-#if debug
-package tools.ds;
+/*
+	#if debug
+	package tools.ds;
 
-import utest.Assert;
-import utest.Test;
-import tools.ds.DynamicVectorTools;
+	import utest.Assert;
+	import utest.Test;
+	import tools.ds.DynamicVectorTools;
 
-@:structInit class DynamicVectorToolsTests extends Test {
+	@:structInit class DynamicVectorToolsTests extends Test {
 	final maxSize = 1048576;
 	final defaultCap = 64;
 
@@ -26,8 +27,9 @@ import tools.ds.DynamicVectorTools;
 		Assert.isTrue(validateSize(size)); // size is max
 		size = maxSize + 1;
 		Assert.isTrue(validateSize(size)); // size gt max
-		*/
-	}
+ */
+// }
+/*
 
 	public inline function test_caps_valid() {
 		Assert.isTrue(validateCaps());
@@ -118,5 +120,6 @@ import tools.ds.DynamicVectorTools;
 		}
 		return valid;
 	}
-}
-#end
+	}
+	#end
+ */

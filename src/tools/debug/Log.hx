@@ -6,23 +6,21 @@ import tools.system.System;
 import sys.io.Process;
 
 @:structInit class Log {
-	static final strEmpty = '';
-	static final preMsg = '\x1b[3';
-	static final midMsg = ':\x1b[0m\x1b[1m';
-	static final postMsg = '\x1b[0m';
+	static final STR_EMPTY = '';
+	static final PRE_MSG = '\x1b[3';
+	static final MSG = ':\x1b[0m\x1b[1m';
+	static final POST_MSG = '\x1b[0m';
 	static var colorCodes:EReg = ~/\x1b\[[^m]+m/g;
 	static var colorSupported:Bool = false;
 	static var colorSupportedDirty:Bool = true;
 	static var sentWarnings:Map<String, Bool> = new Map<String, Bool>();
 
-	public static var accentColor = '\x1b[32;1m';
 	public static var enableColor = true;
 	public static var mute = false;
-	public static var resetColor = '\x1b[0m';
 	public static var verbose = false;
 
 	static inline function msg(_type:Message, _msg:String, _verbose:String, ?_repeat:Bool = false, ?_e:Dynamic = null) {
-		var out = strEmpty;
+		var out = STR_EMPTY;
 		if (!mute && !isEmpty(_msg)) {
 			final isVerbose = verbose && !isEmpty(_verbose);
 			switch (_type) {
@@ -42,19 +40,19 @@ import sys.io.Process;
 						throw _e;
 					Sys.exit(1);
 				case _:
-					out = strEmpty;
+					out = STR_EMPTY;
 			}
 		}
 	}
 
 	static inline function isEmpty(_msg:String)
-		return _msg == strEmpty;
+		return _msg == STR_EMPTY;
 
 	static inline function err(_msg:String)
-		return preMsg + '1;1mError$midMsg $_msg $postMsg\n';
+		return PRE_MSG + '1;1mError$MSG $_msg $POST_MSG\n';
 
 	static inline function warning(_msg:String)
-		return preMsg + '3;1mWarning$midMsg $_msg $postMsg';
+		return PRE_MSG + '3;1mWarning$MSG $_msg $POST_MSG';
 
 	static inline function stripColor(_msg:String) {
 		if (colorSupportedDirty) {
@@ -71,7 +69,7 @@ import sys.io.Process;
 			}
 			colorSupportedDirty = false;
 		}
-		return enableColor && colorSupported ? _msg : colorCodes.replace(_msg, strEmpty);
+		return enableColor && colorSupported ? _msg : colorCodes.replace(_msg, STR_EMPTY);
 	}
 
 	public static inline function print(_msg:String)

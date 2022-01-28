@@ -1,3 +1,4 @@
+/*
 package tools.math;
 
 import haxe.ds.Vector;
@@ -22,3 +23,4 @@ using haxe.Int64;
 		return fs;
 	}
 }
+*/

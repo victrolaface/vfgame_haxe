@@ -1,19 +1,20 @@
-package tools.ds;
+/*
+	package tools.ds;
 
-// using System;
-// using System.Collections.Generic;
-// using System.Diagnostics;
-// using System.Threading.Tasks;
-// namespace Permutations {
-import tools.math.Factorial;
-import haxe.ds.Vector;
-import tools.debug.Precondition;
+	// using System;
+	// using System.Collections.Generic;
+	// using System.Diagnostics;
+	// using System.Threading.Tasks;
+	// namespace Permutations {
+	import tools.math.Factorial;
+	import haxe.ds.Vector;
+	import tools.debug.Precondition;
 
-// import tools.debug.Log;
-// import haxe.macro;
-using haxe.Int64;
+	// import tools.debug.Log;
+	// import haxe.macro;
+	using haxe.Int64;
 
-@:structInit class PermutationOuelletHuttunen<T> {
+	@:structInit class PermutationOuelletHuttunen<T> {
 	var first:Null<Int64> = 0;
 	var last:Null<Int64>;
 	var sorted:Vector<Int>;
@@ -32,7 +33,9 @@ using haxe.Int64;
 	public inline function forEach() {}
 
 	public static inline function forEachMT() {}
-}
+	}
+ */
+
 /*public class PermutationMixOuelletSaniSinghHuttunen {
 		public
 		void ExecuteForEachPermutation(Action<int[]>action)

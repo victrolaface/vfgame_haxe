@@ -4,16 +4,16 @@ import tools.debug.UVErrorType;
 import haxe.PosInfos;
 
 @:structInit class Error {
-	public var message(get, never):String;
-	public final posInfos:PosInfos;
-	public final type:ErrorType;
+	var type:ErrorType;
+	var posInfos:PosInfos;
+	var message(get, never):String;
 
 	public inline function new(_type:ErrorType, ?_posInfos:PosInfos) {
 		type = _type;
 		posInfos = _posInfos;
 	}
 
-	public inline function toString()
+	inline function toString()
 		return '$message at $posInfos';
 
 	inline function get_message():String {

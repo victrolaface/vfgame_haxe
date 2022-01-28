@@ -1,7 +1,7 @@
 package tools.ds;
 
 class Signal<T> implements ISignal<T> {
-	final listeners:Array<Listener<T>> = [];
+	var listeners:Array<Listener<T>> = [];
 
 	public final changeSignal:ISignal<NoData> = new SignalArray<NoData>();
 

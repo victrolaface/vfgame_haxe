@@ -1,3 +1,4 @@
+/*
 package tools.ecs.core;
 
 class ComponentManager {
@@ -5,3 +6,4 @@ class ComponentManager {
         
     }
 }
+*/

@@ -1,11 +1,11 @@
-package tools.ds;
+/*package tools.ds;
 
-import haxe.ds.Vector;
-import tools.ds.DynamicVectorTools;
+	import haxe.ds.Vector;
+	import tools.ds.DynamicVectorTools;
 
-using tools.ds.VectorTools;
+	using tools.ds.VectorTools;
 
-@:structInit class DynamicVector<T> {
+	@:structInit class DynamicVector<T> {
 	var size:Int = 0;
 	var count:Int = 0;
 	var capIdx:Int = 0;
@@ -18,7 +18,7 @@ using tools.ds.VectorTools;
 
 	public var length(get, never):Int;
 
-	public inline function new(?_size:Int = 0) {
+	public inline function new(_size:Int = 0) {
 		size = DynamicVectorTools.size(_size);
 		caps = DynamicVectorTools.caps(maxCap);
 		storage = new Vector<T>(cap);
@@ -26,7 +26,7 @@ using tools.ds.VectorTools;
 		state = Alloc;
 	}
 
-	public inline function alloc(?_n:Int) {
+	public inline function alloc(_n:Int = 0) {
 		if (_n != null && _n >= 0) {
 			final doAlloc = canAlloc(_n);
 			if (doAlloc) {
@@ -126,9 +126,9 @@ using tools.ds.VectorTools;
 					}
 				}
 				mState = Init;
-		}*/
-	}
-
+}*/
+//	}
+/*
 	public inline function add(_item:T) {}
 
 	public inline function remove(_idx:Int) {}
@@ -138,16 +138,16 @@ using tools.ds.VectorTools;
 	public inline function get(_idx:Int) {}
 
 	public inline function set(_idx:Int, _val:T) {}
-}
+	}
 
-enum State {
+	enum State {
 	None;
 	Alloc;
 	Init;
 	Set;
 	Error;
-}
-/*
+	}
+	/*
 	public inline function get(_idx:Int) {
 		final idxLteCap = idxLteCap(_idx);
 		#if debug

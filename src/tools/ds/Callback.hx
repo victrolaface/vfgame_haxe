@@ -6,9 +6,8 @@ typedef CallbackData<T> = (?_err:Error, ?_res:T) -> Void;
 
 @:callable
 abstract Callback<T>(CallbackData<T>) from CallbackData<T> {
-	public static inline function notNull<T>(?_cb:Callback<T>):Callback<T> {
+	public static inline function notNull<T>(?_cb:Callback<T>):Callback<T>
 		return _cb == null ? ((_, _) -> {}) : _cb;
-	}
 
 	@:from public static inline function fromOptionalErrorOnly(_f:(?_err:Error) -> Void):Callback<NoData> {
 		return (?_err:Error, ?_res:NoData) -> _f(_err);

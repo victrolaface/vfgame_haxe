@@ -1,121 +1,90 @@
 {
-	"tools.ds.DynamicVectorToolsTests": {
+	"tools.ecs.core.EntityManagerTests": {
 		"pos": {
 			"line": 7,
-			"file": "test/tools/ds/DynamicVectorToolsTests.hx"
+			"file": "test/tools/ecs/core/EntityManagerTests.hx"
 		},
 		"methods": {
-			"validateSize": {
-				"line": 52
-			},
-			"maxSize": {
-				"line": 8
-			},
-			"test_size_valid": {
-				"line": 14
-			},
-			"validateCaps": {
-				"line": 72
-			},
-			"test_caps_valid": {
-				"line": 28
-			},
-			"defaultCap": {
-				"line": 9
-			}
-		}
-	},
-	"tools.ds.DynamicVectorTests": {
-		"pos": {
-			"line": 9,
-			"file": "test/tools/ds/DynamicVectorTests.hx"
-		},
-		"methods": {
-			"get_sizes": {
-				"line": 45
-			},
 			"valid": {
-				"line": 23
+				"line": 9
 			},
-			"isZero": {
-				"line": 14
+			"validOnUpdateRaises": {
+				"line": 74
 			},
-			"ltZero": {
-				"line": 13
+			"test_update_is_valid": {
+				"line": 42
 			},
-			"ltMaxSize": {
-				"line": 19
-			},
-			"gtDefaultCap": {
-				"line": 18
-			},
-			"nVals": {
-				"line": 24
-			},
-			"maxSize": {
-				"line": 10
-			},
-			"isMaxSize": {
-				"line": 20
-			},
-			"isNull": {
-				"line": 12
-			},
-			"sizes": {
-				"line": 25
-			},
-			"get_nVals": {
-				"line": 30
-			},
-			"ltDefaultCap": {
-				"line": 16
-			},
-			"defaultCap": {
-				"line": 11
-			},
-			"sut": {
-				"line": 22
-			},
-			"gtMaxSize": {
-				"line": 21
-			},
-			"isDefaultCap": {
+			"LT_MAX": {
 				"line": 17
 			},
-			"gtZero": {
-				"line": 15
-			}
-		}
-	},
-	"tools.ds.VectorToolsTests": {
-		"pos": {
-			"line": 8,
-			"file": "test/tools/ds/VectorToolsTests.hx"
-		},
-		"methods": {
-			"test_trim_valid": {
-				"line": 61
+			"SIZES": {
+				"line": 19
 			},
-			"test_blit_valid": {
-				"line": 73
+			"validateUpdate": {
+				"line": 81
 			},
-			"validateBlit": {
-				"line": 222
+			"validOnCreateRaises": {
+				"line": 67
 			},
-			"test_init_valid": {
-				"line": 29
+			"MAX": {
+				"line": 16
 			},
-			"validateAlloc": {
-				"line": 114
+			"LT_ZERO": {
+				"line": 11
 			},
-			"validateTrim": {
-				"line": 190
+			"test_new_is_valid": {
+				"line": 39
 			},
-			"validateInit": {
-				"line": 146
+			"delete": {
+				"line": 24
 			},
-			"test_alloc_valid": {
+			"get_createLen": {
+				"line": 33
+			},
+			"sizesLen": {
+				"line": 22
+			},
+			"get_sizesLen": {
+				"line": 30
+			},
+			"GT_ZERO": {
 				"line": 12
+			},
+			"validateNew": {
+				"line": 48
+			},
+			"ZERO": {
+				"line": 10
+			},
+			"validateCreate": {
+				"line": 148
+			},
+			"GT_MIN": {
+				"line": 15
+			},
+			"LT_MIN": {
+				"line": 14
+			},
+			"sut": {
+				"line": 8
+			},
+			"test_create_is_valid": {
+				"line": 45
+			},
+			"CREATE": {
+				"line": 20
+			},
+			"get_delete": {
+				"line": 26
+			},
+			"GT_MAX": {
+				"line": 18
+			},
+			"createLen": {
+				"line": 23
+			},
+			"MIN": {
+				"line": 13
 			}
 		}
 	}

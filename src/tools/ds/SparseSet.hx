@@ -1,21 +1,17 @@
 package tools.ds;
 
-import haxe.ds.Vector;
-
-class SparseSet {
-	final sparse:Vector<Int>;
-	final dense:Vector<Int>;
-
+@:structInit class SparseSet {
+	var sparse:Array<Int> = []; // Vector<Int>;
+	var dense:Array<Int> = []; // Vector<Int>;
 	var count:Int;
 	var pop:Int;
 	var push:Int;
 	var idx:Int;
 
 	public function new(_size) {
-		sparse = new Vector(_size);
-		dense = new Vector(_size);
+		sparse = new Array<Int>(); // Vector(_size);
+		dense = new Array<Int>(); // Vector(_size);
 		count = 0;
-
 		for (i in 0...sparse.length)
 			sparse[i] = 0;
 		for (i in 0...dense.length)

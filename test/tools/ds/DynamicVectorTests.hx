@@ -1,46 +1,37 @@
-package tools.ds;
+/*package tools.ds;
 
-import utest.Assert;
-import utest.Test;
-import tools.ds.CartesianProductIterator;
-import tools.ds.DynamicVector;
-import haxe.ds.Vector;
-import haxe.Json;
+	import utest.Assert;
+	import utest.Test;
+	import tools.ds.CartesianProductIterator;
+	import tools.ds.DynamicVector;
+	import haxe.ds.Vector;
+	import haxe.Json;
 
-@:structInit class DynamicVectorTests extends Test {
-	static final maxSize = 1048576;
-	static final defaultCap = 64;
-	static final isNull = null;
-	static final ltZero = -1;
-	static final isZero = 0;
-	static final gtZero = 1;
-	static final ltDefaultCap = defaultCap - 1;
-	static final isDefaultCap = defaultCap;
-	static final gtDefaultCap = defaultCap + 1;
-	static final ltMaxSize = maxSize - 1;
-	static final isMaxSize = maxSize;
-	static final gtMaxSize = maxSize + 1;
+	@:structInit class DynamicVectorTests extends Test {
+	static final MAX_SIZE = 1048576;
+	static final DEFAULT_CAP = 64;
+	static final LT_ZERO=-1;
+	static final IS_ZERO=0;
 	static var sut:DynamicVector<Int>;
 	static var valid:Bool = false;
-	static var nVals(get, never):Vector<Null<Int>>;
-	static var sizes(get, never):Vector<Null<Int>>;
-	static var srcItems(get, never):Vector<Vector<Null<Int>>>;
+	static var nVals(get, never):Vector<Int>;
+	static var sizes(get, never):Vector<Int>;
+	static var srcItems(get, never):Vector<Vector<Int>>;
 
 	public inline function new()
 		super();
 
 	static inline function get_nVals() {
-		var n = new Vector<Null<Int>>(10);
-		n[0] = isNull;
-		n[1] = ltZero;
-		n[2] = isZero;
-		n[3] = gtZero;
-		n[4] = ltDefaultCap;
-		n[5] = isDefaultCap;
-		n[6] = gtDefaultCap;
-		n[7] = ltMaxSize;
-		n[8] = isMaxSize;
-		n[9] = gtMaxSize;
+		var n = new Vector<Int>(9);
+		n[0] = LT_ZERO;
+		n[1] = IS_ZERO;
+		n[2] = 1;
+		n[3] = DEFAULT_CAP -1;
+		n[4] = DEFAULT_CAP;
+		n[5] = DEFAULT_CAP + 1;
+		n[6] = MAX_SIZE-1;
+		n[7] = MAX_SIZE;
+		n[8] = MAX_SIZE +1;
 		return n;
 	}
 
@@ -48,15 +39,16 @@ import haxe.Json;
 		return nVals;
 
 	static inline function get_srcItems() {
-		var items = new Vector<Vector<Null<Int>>>(nVals.length - 1);
+		final SIZES_LEN=sizes.length;
+		var items = new Vector<Vector<Int>>(SIZES_LEN-1);//sizesLen);//-1);// - 1);
 		var idx = 0;
-		for (j in 0...sizes.length) {
+		for (j in 0...SIZES_LEN) {
 			var size = sizes[j];
-			var i:Vector<Null<Int>>;
-			if (size == ltZero)
+			var i:Vector<Int>;
+			if (size == LT_ZERO)//ltZero)
 				continue;
-			else if (size == isZero)
-				i = new Vector<Null<Int>>(0);
+			else if (size == IS_ZERO)//isZero)
+				i = new Vector<Int>(IS_ZERO);
 			else if (size == isNull) {
 				i = new Vector<Null<Int>>(1);
 				i[0] = null;
@@ -74,18 +66,41 @@ import haxe.Json;
 		return items;
 	}
 
-	public inline function test_new_valid(){
-		valid=false;
-		for(i in 0...sizes.length){
-			var size=sizes[i];
+	public static inline function test_new_valid()
+		Assert.isTrue(validateNew());
+
+	public static inline function test_alloc_valid()
+		Assert.isTrue(validateAlloc());
+
+	static inline function validateNew() {
+		valid = false;
+		for (i in 0...sizes.length) {
+			var size = sizes[i];
 			sut = new DynamicVector(size);
 			if (size == ltZero || size == isZero || size == isNull)
 				valid = sut.length == 0;
 			else if (size == ltDefaultCap)
 				valid = sut.length == size;
-			else //if (size == gtMaxSize)
-				valid = sut.length == defaultCap; 
+			else
+				valid = sut.length == defaultCap;
+			if (valid)
+				continue;
+			else
+				break;
 		}
+		return valid;
+	}
+
+	static inline function validateAlloc(){
+		valid=false;
+		var params =[
+			sizes,
+			nVals
+		];
+		for(v in new CartesianProductIterator(params)){
+			
+		}
+		return valid;
 	}
 	/*class Test {
 		static function main() {
@@ -102,8 +117,8 @@ import haxe.Json;
 				trace(v);
 			}
 		}
-	}*/
-}
+}*/
+// }
 // static var srcItems(get, never):Vector<Vector<Int>>>;
 // static var vals(get,never):Vector<Null<Int>>;
 // static var sizesArr:Array<Null<Int>> = [
